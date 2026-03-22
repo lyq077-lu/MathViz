@@ -107,7 +107,7 @@ function LeftPanel() {
         bg: isActive ? 'bg-cyan-500/20' : 'bg-slate-800/50',
         border: isActive ? 'border-cyan-500/50' : 'border-slate-700',
         text: isActive ? 'text-cyan-400' : 'text-slate-300',
-        iconBg: isActive ? 'bg-cyan-500' : 'bg-slate-700',
+        iconBg: isActive ? 'bg-cyan-500' : 'bg-cyan-500/20',
         iconText: isActive ? 'text-white' : 'text-cyan-400',
         indicator: 'bg-cyan-500'
       };
@@ -117,7 +117,7 @@ function LeftPanel() {
         bg: isActive ? 'bg-orange-500/20' : 'bg-slate-800/50',
         border: isActive ? 'border-orange-500/50' : 'border-slate-700',
         text: isActive ? 'text-orange-400' : 'text-slate-300',
-        iconBg: isActive ? 'bg-orange-500' : 'bg-slate-700',
+        iconBg: isActive ? 'bg-orange-500' : 'bg-orange-500/20',
         iconText: isActive ? 'text-white' : 'text-orange-400',
         indicator: 'bg-orange-500'
       };
@@ -127,7 +127,7 @@ function LeftPanel() {
         bg: isActive ? 'bg-purple-500/20' : 'bg-slate-800/50',
         border: isActive ? 'border-purple-500/50' : 'border-slate-700',
         text: isActive ? 'text-purple-400' : 'text-slate-300',
-        iconBg: isActive ? 'bg-purple-500' : 'bg-slate-700',
+        iconBg: isActive ? 'bg-purple-500' : 'bg-purple-500/20',
         iconText: isActive ? 'text-white' : 'text-purple-400',
         indicator: 'bg-purple-500'
       };
@@ -137,7 +137,7 @@ function LeftPanel() {
         bg: isActive ? 'bg-green-500/20' : 'bg-slate-800/50',
         border: isActive ? 'border-green-500/50' : 'border-slate-700',
         text: isActive ? 'text-green-400' : 'text-slate-300',
-        iconBg: isActive ? 'bg-green-500' : 'bg-slate-700',
+        iconBg: isActive ? 'bg-green-500' : 'bg-green-500/20',
         iconText: isActive ? 'text-white' : 'text-green-400',
         indicator: 'bg-green-500'
       };
@@ -146,7 +146,7 @@ function LeftPanel() {
       bg: isActive ? 'bg-cyan-500/20' : 'bg-slate-800/50',
       border: isActive ? 'border-cyan-500/50' : 'border-slate-700',
       text: isActive ? 'text-cyan-400' : 'text-slate-300',
-      iconBg: isActive ? 'bg-cyan-500' : 'bg-slate-700',
+      iconBg: isActive ? 'bg-cyan-500' : 'bg-cyan-500/20',
       iconText: isActive ? 'text-white' : 'text-cyan-400',
       indicator: 'bg-cyan-500'
     };
@@ -254,7 +254,7 @@ function LeftPanel() {
                             }`}
                           >
                             <div className="flex items-center gap-2">
-                              <div className={`p-1.5 rounded shrink-0 ${isActive ? `${topicStyle.iconBg} ${topicStyle.iconText}` : 'bg-slate-700/50 text-slate-400'}`}>
+                              <div className={`p-1.5 rounded shrink-0 ${topicStyle.iconBg} ${topicStyle.iconText}`}>
                                 {topic.icon}
                               </div>
                               <div className="min-w-0 overflow-hidden">
