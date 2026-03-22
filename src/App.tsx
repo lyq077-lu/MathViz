@@ -1,5 +1,6 @@
-import { FunctionSquare, Shapes, Calculator, Circle, Triangle, TrendingUp, Play, Pause, RotateCcw } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { FunctionSquare, Shapes, Calculator, Circle, Triangle, TrendingUp, Play, Pause, RotateCcw, ChevronDown, ChevronRight, Box, FlaskConical, Dices } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AnimationProvider, useAnimation, type TrigonometryState, type LinearState, type QuadraticState, type PythagoreanState, type CircleState } from './contexts/AnimationContext';
 import UnitCircle from './modules/functions/trigonometry/UnitCircle';
 import LinearFunction from './modules/functions/linear/LinearFunction';
@@ -7,7 +8,8 @@ import QuadraticFunction from './modules/functions/quadratic/QuadraticFunction';
 import PythagoreanTheorem from './modules/geometry/triangles/PythagoreanTheorem';
 import CircleEquation from './modules/geometry/circles/CircleEquation';
 
-interface Topic {
+// ============ 类型定义 ============
+interface SubTopic {
   id: string;
   title: string;
   description: string;
@@ -15,17 +17,78 @@ interface Topic {
   component: React.ReactNode;
 }
 
-const topics: Topic[] = [
-  { id: 'trigonometry', title: '三角函数', description: '单位圆与正弦波', icon: <Shapes className="w-5 h-5" />, component: <UnitCircle /> },
-  { id: 'linear', title: '线性函数', description: 'y = kx + b', icon: <FunctionSquare className="w-5 h-5" />, component: <LinearFunction /> },
-  { id: 'quadratic', title: '二次函数', description: '抛物线顶点', icon: <TrendingUp className="w-5 h-5" />, component: <QuadraticFunction /> },
-  { id: 'pythagorean', title: '勾股定理', description: '拼图动画证明', icon: <Triangle className="w-5 h-5" />, component: <PythagoreanTheorem /> },
-  { id: 'circle', title: '圆的方程', description: '标准方程', icon: <Circle className="w-5 h-5" />, component: <CircleEquation /> },
+interface TopicGroup {
+  id: string;
+  title: string;
+  icon: React.ReactNode;
+  color: string;
+  subTopics: SubTopic[];
+}
+
+// ============ 导航配置 ============
+const topicGroups: TopicGroup[] = [
+  {
+    id: 'functions',
+    title: '函数可视化',
+    icon: <FunctionSquare className="w-5 h-5" />,
+    color: 'cyan',
+    subTopics: [
+      { id: 'trigonometry', title: '三角函数', description: '单位圆与正弦波', icon: <Shapes className="w-4 h-4" />, component: <UnitCircle /> },
+      { id: 'linear', title: '线性函数', description: 'y = kx + b', icon: <TrendingUp className="w-4 h-4" />, component: <LinearFunction /> },
+      { id: 'quadratic', title: '二次函数', description: '抛物线顶点', icon: <Box className="w-4 h-4" />, component: <QuadraticFunction /> },
+    ]
+  },
+  {
+    id: 'geometry',
+    title: '几何探索',
+    icon: <Triangle className="w-5 h-5" />,
+    color: 'orange',
+    subTopics: [
+      { id: 'pythagorean', title: '勾股定理', description: '拼图动画证明', icon: <Triangle className="w-4 h-4" />, component: <PythagoreanTheorem /> },
+      { id: 'circle', title: '圆的方程', description: '标准方程', icon: <Circle className="w-4 h-4" />, component: <CircleEquation /> },
+    ]
+  },
+  {
+    id: 'calculus',
+    title: '微积分入门',
+    icon: <FlaskConical className="w-5 h-5" />,
+    color: 'purple',
+    subTopics: []
+  },
+  {
+    id: 'probability',
+    title: '概率统计',
+    icon: <Dices className="w-5 h-5" />,
+    color: 'green',
+    subTopics: []
+  },
 ];
 
-// ============ 左侧主题栏 ============
+// 扁平化所有子主题供查找
+const allTopics = topicGroups.flatMap(g => g.subTopics);
+
+// ============ 左侧主题栏（一二级目录结构） ============
 function LeftPanel() {
   const { activeTopic, setActiveTopic, reset } = useAnimation();
+  const [expandedGroups, setExpandedGroups] = useState<string[]>(['functions', 'geometry']);
+
+  const toggleGroup = (groupId: string) => {
+    setExpandedGroups(prev => 
+      prev.includes(groupId) 
+        ? prev.filter(id => id !== groupId)
+        : [...prev, groupId]
+    );
+  };
+
+  const getGroupColor = (color: string, isActive: boolean) => {
+    const colors: Record<string, { bg: string; border: string; text: string; icon: string }> = {
+      cyan: { bg: isActive ? 'bg-cyan-500/20' : 'bg-slate-800/50', border: isActive ? 'border-cyan-500/50' : 'border-slate-700', text: isActive ? 'text-cyan-400' : 'text-slate-300', icon: isActive ? 'bg-cyan-500 text-white' : 'bg-slate-700 text-cyan-400' },
+      orange: { bg: isActive ? 'bg-orange-500/20' : 'bg-slate-800/50', border: isActive ? 'border-orange-500/50' : 'border-slate-700', text: isActive ? 'text-orange-400' : 'text-slate-300', icon: isActive ? 'bg-orange-500 text-white' : 'bg-slate-700 text-orange-400' },
+      purple: { bg: isActive ? 'bg-purple-500/20' : 'bg-slate-800/50', border: isActive ? 'border-purple-500/50' : 'border-slate-700', text: isActive ? 'text-purple-400' : 'text-slate-300', icon: isActive ? 'bg-purple-500 text-white' : 'bg-slate-700 text-purple-400' },
+      green: { bg: isActive ? 'bg-green-500/20' : 'bg-slate-800/50', border: isActive ? 'border-green-500/50' : 'border-slate-700', text: isActive ? 'text-green-400' : 'text-slate-300', icon: isActive ? 'bg-green-500 text-white' : 'bg-slate-700 text-green-400' },
+    };
+    return colors[color] || colors.cyan;
+  };
 
   return (
     <div 
@@ -33,9 +96,9 @@ function LeftPanel() {
         position: 'fixed', 
         left: 0, 
         top: 0, 
-        width: '240px', 
-        minWidth: '240px',
-        maxWidth: '240px',
+        width: '260px', 
+        minWidth: '260px',
+        maxWidth: '260px',
         height: '100vh',
         zIndex: 1000,
         flexShrink: 0
@@ -57,34 +120,101 @@ function LeftPanel() {
         </div>
       </div>
 
-      {/* Topic List */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-2 min-h-0">
-        <p className="text-xs text-slate-500 uppercase tracking-wider mb-2 px-2">选择主题</p>
-        {topics.map((topic) => (
-          <motion.button
-            key={topic.id}
-            onClick={() => { setActiveTopic(topic.id); reset(); }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className={`w-full p-3 rounded-xl border text-left transition-all ${
-              activeTopic === topic.id
-                ? 'border-cyan-500 bg-cyan-500/10'
-                : 'border-slate-700 bg-slate-800/50 hover:border-slate-600'
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg shrink-0 ${activeTopic === topic.id ? 'bg-cyan-500 text-white' : 'bg-slate-700 text-slate-400'}`}>
-                {topic.icon}
-              </div>
-              <div className="min-w-0 overflow-hidden">
-                <h3 className={`font-semibold text-sm ${activeTopic === topic.id ? 'text-cyan-400' : 'text-white'}`}>
-                  {topic.title}
-                </h3>
-                <p className="text-slate-400 text-xs truncate">{topic.description}</p>
-              </div>
+      {/* Topic Groups */}
+      <div className="flex-1 overflow-y-auto p-3 space-y-1 min-h-0">
+        <p className="text-xs text-slate-500 uppercase tracking-wider mb-3 px-2">选择主题</p>
+        
+        {topicGroups.map((group) => {
+          const isExpanded = expandedGroups.includes(group.id);
+          const hasSubTopics = group.subTopics.length > 0;
+          const isGroupActive = group.subTopics.some(t => t.id === activeTopic);
+          const groupStyle = getGroupColor(group.color, isGroupActive);
+
+          return (
+            <div key={group.id} className="mb-2">
+              {/* 一级目录：模块分组 */}
+              <motion.button
+                onClick={() => hasSubTopics && toggleGroup(group.id)}
+                whileHover={{ scale: hasSubTopics ? 1.01 : 1 }}
+                whileTap={{ scale: hasSubTopics ? 0.99 : 1 }}
+                disabled={!hasSubTopics}
+                className={`w-full p-3 rounded-lg border text-left transition-all ${
+                  isGroupActive 
+                    ? `${groupStyle.bg} ${groupStyle.border}` 
+                    : 'bg-slate-800/30 border-transparent hover:bg-slate-800/50'
+                } ${!hasSubTopics ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-lg shrink-0 ${groupStyle.icon}`}>
+                    {group.icon}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className={`font-semibold text-sm ${groupStyle.text}`}>
+                      {group.title}
+                    </h3>
+                  </div>
+                  {hasSubTopics && (
+                    <div className="text-slate-500">
+                      {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                    </div>
+                  )}
+                  {!hasSubTopics && (
+                    <span className="text-xs text-slate-600 px-2 py-0.5 rounded bg-slate-800">待开发</span>
+                  )}
+                </div>
+              </motion.button>
+
+              {/* 二级目录：具体功能 */}
+              <AnimatePresence>
+                {isExpanded && hasSubTopics && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="ml-4 pl-4 border-l-2 border-slate-700/50 mt-1 space-y-1">
+                      {group.subTopics.map((topic) => {
+                        const isActive = activeTopic === topic.id;
+                        const topicStyle = getGroupColor(group.color, isActive);
+
+                        return (
+                          <motion.button
+                            key={topic.id}
+                            onClick={() => { setActiveTopic(topic.id); reset(); }}
+                            whileHover={{ scale: 1.02, x: 2 }}
+                            whileTap={{ scale: 0.98 }}
+                            className={`w-full p-2.5 rounded-lg border text-left transition-all ${
+                              isActive
+                                ? `${topicStyle.bg} ${topicStyle.border}`
+                                : 'bg-slate-800/20 border-transparent hover:bg-slate-800/40'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <div className={`p-1.5 rounded shrink-0 ${isActive ? topicStyle.icon : 'bg-slate-700/50 text-slate-400'}`}>
+                                {topic.icon}
+                              </div>
+                              <div className="min-w-0 overflow-hidden">
+                                <h4 className={`font-medium text-sm ${isActive ? topicStyle.text : 'text-slate-300'}`}>
+                                  {topic.title}
+                                </h4>
+                                <p className="text-slate-500 text-xs truncate">{topic.description}</p>
+                              </div>
+                              {isActive && (
+                                <div className={`ml-auto w-1.5 h-1.5 rounded-full bg-${group.color}-500`} />
+                              )}
+                            </div>
+                          </motion.button>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-          </motion.button>
-        ))}
+          );
+        })}
       </div>
 
       {/* Footer */}
@@ -182,13 +312,13 @@ function RightPanel() {
 // ============ 主内容区 - 自适应 ============
 function MainContent() {
   const { activeTopic } = useAnimation();
-  const activeComponent = topics.find(t => t.id === activeTopic)?.component;
+  const activeComponent = allTopics.find(t => t.id === activeTopic)?.component;
 
   return (
     <div 
       style={{ 
         position: 'fixed',
-        left: '240px',
+        left: '260px',
         right: '300px',
         top: 0,
         height: '100vh',
