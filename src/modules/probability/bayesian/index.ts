@@ -1,3 +1,2 @@
-// 贝叶斯定理可视化
-// TODO: 实现概率更新过程动画
-export {};
+export { default as BayesianTheorem } from './BayesianTheorem';
+export { default } from './BayesianTheorem';

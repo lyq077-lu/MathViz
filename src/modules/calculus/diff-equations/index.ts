@@ -1,3 +1,2 @@
-// 微分方程可视化
-// TODO: 实现向量场、轨迹追踪动画
-export {};
+export { default as DifferentialEquations } from './DifferentialEquations';
+export { default } from './DifferentialEquations';

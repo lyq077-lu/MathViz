@@ -1,3 +1,2 @@
-// 积分概念可视化
-// TODO: 实现黎曼和堆积、面积计算动画
-export {};
+export { default as RiemannSum } from './RiemannSum';
+export { default } from './RiemannSum';

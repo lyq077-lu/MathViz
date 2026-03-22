@@ -11,7 +11,11 @@ import CircleEquation from './modules/geometry/circles/CircleEquation';
 import FractalGeometry from './modules/geometry/fractals/FractalGeometry';
 import LimitConcept from './modules/calculus/limits/LimitConcept';
 import DerivativeGeometry from './modules/calculus/derivatives/DerivativeGeometry';
+import RiemannSum from './modules/calculus/integrals/RiemannSum';
+import DifferentialEquations from './modules/calculus/diff-equations/DifferentialEquations';
 import LawOfLargeNumbers from './modules/probability/laws-of-large-numbers/LawOfLargeNumbers';
+import NormalDistribution from './modules/probability/distributions/NormalDistribution';
+import BayesianTheorem from './modules/probability/bayesian/BayesianTheorem';
 
 // ============ 类型定义 ============
 interface SubTopic {
@@ -63,6 +67,8 @@ const topicGroups: TopicGroup[] = [
     subTopics: [
       { id: 'limits', title: '极限概念', description: 'ε-δ定义', icon: <Infinity className="w-4 h-4" />, component: <LimitConcept /> },
       { id: 'derivatives', title: '导数几何', description: '切线与斜率', icon: <Sigma className="w-4 h-4" />, component: <DerivativeGeometry /> },
+      { id: 'integrals', title: '黎曼和', description: '积分堆积', icon: <Box className="w-4 h-4" />, component: <RiemannSum /> },
+      { id: 'diff-equations', title: '微分方程', description: '向量场轨迹', icon: <TrendingUp className="w-4 h-4" />, component: <DifferentialEquations /> },
     ]
   },
   {
@@ -72,6 +78,8 @@ const topicGroups: TopicGroup[] = [
     color: 'green',
     subTopics: [
       { id: 'law-of-large-numbers', title: '大数定律', description: '频率稳定性', icon: <TrendingUp className="w-4 h-4" />, component: <LawOfLargeNumbers /> },
+      { id: 'normal-distribution', title: '正态分布', description: '钟形曲线', icon: <Box className="w-4 h-4" />, component: <NormalDistribution /> },
+      { id: 'bayesian', title: '贝叶斯定理', description: '概率更新', icon: <Hexagon className="w-4 h-4" />, component: <BayesianTheorem /> },
     ]
   },
 ];
@@ -342,6 +350,14 @@ function RightPanel() {
         return <DerivativeControls />;
       case 'law-of-large-numbers':
         return <LawOfLargeNumbersControls />;
+      case 'integrals':
+        return <IntegralControls />;
+      case 'diff-equations':
+        return <DiffEquationControls />;
+      case 'normal-distribution':
+        return <NormalDistControls />;
+      case 'bayesian':
+        return <BayesianControls />;
       default:
         return <PlaceholderControls topic={activeTopic} />;
     }
@@ -781,6 +797,94 @@ function PlaceholderControls({ topic }: { topic: string }) {
       <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
         <h4 className="text-white font-medium mb-3">{topic}</h4>
         <p className="text-slate-400 text-sm">该模块暂无参数控制</p>
+      </div>
+    </div>
+  );
+}
+
+function IntegralControls() {
+  return (
+    <div className="space-y-4">
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+        <h4 className="text-purple-400 font-medium mb-3">黎曼和</h4>
+        <div className="text-slate-300 text-sm space-y-2">
+          <p>∫₀³ x² dx = 9</p>
+          <p>通过矩形面积逼近积分值</p>
+        </div>
+      </div>
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+        <h4 className="text-white font-medium mb-3">说明</h4>
+        <ul className="text-slate-400 text-sm space-y-1">
+          <li>• 紫色矩形: 黎曼和近似</li>
+          <li>• 绿色曲线: 真实函数</li>
+          <li>• 分区越多越精确</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function DiffEquationControls() {
+  return (
+    <div className="space-y-4">
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+        <h4 className="text-purple-400 font-medium mb-3">微分方程</h4>
+        <div className="text-slate-300 text-sm space-y-2">
+          <p>dy/dt = -y</p>
+          <p>指数衰减模型</p>
+        </div>
+      </div>
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+        <h4 className="text-white font-medium mb-3">图例</h4>
+        <ul className="text-slate-400 text-sm space-y-1">
+          <li>• 紫色向量: 方向场</li>
+          <li>• 绿色轨迹: 解曲线</li>
+          <li>• 橙色点: 初始条件</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function NormalDistControls() {
+  return (
+    <div className="space-y-4">
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+        <h4 className="text-green-400 font-medium mb-3">正态分布</h4>
+        <div className="text-slate-300 text-sm space-y-2">
+          <p>N(μ, σ²) - 钟形曲线</p>
+          <p>68-95-99.7 规则</p>
+        </div>
+      </div>
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+        <h4 className="text-white font-medium mb-3">操作</h4>
+        <ul className="text-slate-400 text-sm space-y-1">
+          <li>• 点击"生成"开始采样</li>
+          <li>• 观察钟形曲线形成</li>
+          <li>• 样本越多越接近理论</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function BayesianControls() {
+  return (
+    <div className="space-y-4">
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+        <h4 className="text-green-400 font-medium mb-3">贝叶斯定理</h4>
+        <div className="text-slate-300 text-sm space-y-2">
+          <p>P(A|B) = P(B|A)·P(A) / P(B)</p>
+          <p>后验 ∝ 似然 × 先验</p>
+        </div>
+      </div>
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+        <h4 className="text-white font-medium mb-3">调节参数</h4>
+        <ul className="text-slate-400 text-sm space-y-1">
+          <li>• 先验: 初始信念</li>
+          <li>• 似然: 证据强度</li>
+          <li>• 假阳性: 误差率</li>
+        </ul>
       </div>
     </div>
   );

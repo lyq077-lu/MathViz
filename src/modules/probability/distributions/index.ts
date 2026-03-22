@@ -1,3 +1,2 @@
-// 概率分布可视化
-// TODO: 实现正态分布钟形曲线生成动画
-export {};
+export { default as NormalDistribution } from './NormalDistribution';
+export { default } from './NormalDistribution';
