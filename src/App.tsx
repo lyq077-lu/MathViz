@@ -80,14 +80,56 @@ function LeftPanel() {
     );
   };
 
-  const getGroupColor = (color: string, isActive: boolean) => {
-    const colors: Record<string, { bg: string; border: string; text: string; icon: string }> = {
-      cyan: { bg: isActive ? 'bg-cyan-500/20' : 'bg-slate-800/50', border: isActive ? 'border-cyan-500/50' : 'border-slate-700', text: isActive ? 'text-cyan-400' : 'text-slate-300', icon: isActive ? 'bg-cyan-500 text-white' : 'bg-slate-700 text-cyan-400' },
-      orange: { bg: isActive ? 'bg-orange-500/20' : 'bg-slate-800/50', border: isActive ? 'border-orange-500/50' : 'border-slate-700', text: isActive ? 'text-orange-400' : 'text-slate-300', icon: isActive ? 'bg-orange-500 text-white' : 'bg-slate-700 text-orange-400' },
-      purple: { bg: isActive ? 'bg-purple-500/20' : 'bg-slate-800/50', border: isActive ? 'border-purple-500/50' : 'border-slate-700', text: isActive ? 'text-purple-400' : 'text-slate-300', icon: isActive ? 'bg-purple-500 text-white' : 'bg-slate-700 text-purple-400' },
-      green: { bg: isActive ? 'bg-green-500/20' : 'bg-slate-800/50', border: isActive ? 'border-green-500/50' : 'border-slate-700', text: isActive ? 'text-green-400' : 'text-slate-300', icon: isActive ? 'bg-green-500 text-white' : 'bg-slate-700 text-green-400' },
+  // 获取颜色样式 - 使用完整类名（Tailwind 需要静态类名）
+  const getGroupStyles = (color: string, isActive: boolean) => {
+    if (color === 'cyan') {
+      return {
+        bg: isActive ? 'bg-cyan-500/20' : 'bg-slate-800/50',
+        border: isActive ? 'border-cyan-500/50' : 'border-slate-700',
+        text: isActive ? 'text-cyan-400' : 'text-slate-300',
+        iconBg: isActive ? 'bg-cyan-500' : 'bg-slate-700',
+        iconText: isActive ? 'text-white' : 'text-cyan-400',
+        indicator: 'bg-cyan-500'
+      };
+    }
+    if (color === 'orange') {
+      return {
+        bg: isActive ? 'bg-orange-500/20' : 'bg-slate-800/50',
+        border: isActive ? 'border-orange-500/50' : 'border-slate-700',
+        text: isActive ? 'text-orange-400' : 'text-slate-300',
+        iconBg: isActive ? 'bg-orange-500' : 'bg-slate-700',
+        iconText: isActive ? 'text-white' : 'text-orange-400',
+        indicator: 'bg-orange-500'
+      };
+    }
+    if (color === 'purple') {
+      return {
+        bg: isActive ? 'bg-purple-500/20' : 'bg-slate-800/50',
+        border: isActive ? 'border-purple-500/50' : 'border-slate-700',
+        text: isActive ? 'text-purple-400' : 'text-slate-300',
+        iconBg: isActive ? 'bg-purple-500' : 'bg-slate-700',
+        iconText: isActive ? 'text-white' : 'text-purple-400',
+        indicator: 'bg-purple-500'
+      };
+    }
+    if (color === 'green') {
+      return {
+        bg: isActive ? 'bg-green-500/20' : 'bg-slate-800/50',
+        border: isActive ? 'border-green-500/50' : 'border-slate-700',
+        text: isActive ? 'text-green-400' : 'text-slate-300',
+        iconBg: isActive ? 'bg-green-500' : 'bg-slate-700',
+        iconText: isActive ? 'text-white' : 'text-green-400',
+        indicator: 'bg-green-500'
+      };
+    }
+    return {
+      bg: isActive ? 'bg-cyan-500/20' : 'bg-slate-800/50',
+      border: isActive ? 'border-cyan-500/50' : 'border-slate-700',
+      text: isActive ? 'text-cyan-400' : 'text-slate-300',
+      iconBg: isActive ? 'bg-cyan-500' : 'bg-slate-700',
+      iconText: isActive ? 'text-white' : 'text-cyan-400',
+      indicator: 'bg-cyan-500'
     };
-    return colors[color] || colors.cyan;
   };
 
   return (
@@ -128,7 +170,7 @@ function LeftPanel() {
           const isExpanded = expandedGroups.includes(group.id);
           const hasSubTopics = group.subTopics.length > 0;
           const isGroupActive = group.subTopics.some(t => t.id === activeTopic);
-          const groupStyle = getGroupColor(group.color, isGroupActive);
+          const groupStyle = getGroupStyles(group.color, isGroupActive);
 
           return (
             <div key={group.id} className="mb-2">
@@ -145,7 +187,7 @@ function LeftPanel() {
                 } ${!hasSubTopics ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg shrink-0 ${groupStyle.icon}`}>
+                  <div className={`p-2 rounded-lg shrink-0 ${groupStyle.iconBg} ${groupStyle.iconText}`}>
                     {group.icon}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -177,7 +219,7 @@ function LeftPanel() {
                     <div className="ml-4 pl-4 border-l-2 border-slate-700/50 mt-1 space-y-1">
                       {group.subTopics.map((topic) => {
                         const isActive = activeTopic === topic.id;
-                        const topicStyle = getGroupColor(group.color, isActive);
+                        const topicStyle = getGroupStyles(group.color, isActive);
 
                         return (
                           <motion.button
@@ -192,7 +234,7 @@ function LeftPanel() {
                             }`}
                           >
                             <div className="flex items-center gap-2">
-                              <div className={`p-1.5 rounded shrink-0 ${isActive ? topicStyle.icon : 'bg-slate-700/50 text-slate-400'}`}>
+                              <div className={`p-1.5 rounded shrink-0 ${isActive ? `${topicStyle.iconBg} ${topicStyle.iconText}` : 'bg-slate-700/50 text-slate-400'}`}>
                                 {topic.icon}
                               </div>
                               <div className="min-w-0 overflow-hidden">
@@ -202,7 +244,7 @@ function LeftPanel() {
                                 <p className="text-slate-500 text-xs truncate">{topic.description}</p>
                               </div>
                               {isActive && (
-                                <div className={`ml-auto w-1.5 h-1.5 rounded-full bg-${group.color}-500`} />
+                                <div className={`ml-auto w-1.5 h-1.5 rounded-full ${topicStyle.indicator}`} />
                               )}
                             </div>
                           </motion.button>
