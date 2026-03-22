@@ -1,11 +1,11 @@
 import { FunctionSquare, Shapes, Calculator, Circle, Triangle, TrendingUp, Play, Pause, RotateCcw } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { AnimationProvider, useAnimation, type TrigonometryState, type LinearState, type QuadraticState, type PythagoreanState, type CircleState } from './contexts/AnimationContext';
-import UnitCircle from './components/UnitCircle';
-import LinearFunction from './components/LinearFunction';
-import QuadraticFunction from './components/QuadraticFunction';
-import PythagoreanTheorem from './components/PythagoreanTheorem';
-import CircleEquation from './components/CircleEquation';
+import UnitCircle from './modules/functions/UnitCircle';
+import LinearFunction from './modules/functions/LinearFunction';
+import QuadraticFunction from './modules/functions/QuadraticFunction';
+import PythagoreanTheorem from './modules/geometry/PythagoreanTheorem';
+import CircleEquation from './modules/geometry/CircleEquation';
 
 interface Topic {
   id: string;

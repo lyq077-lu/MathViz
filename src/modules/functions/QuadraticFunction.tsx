@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useAnimation } from '../contexts/AnimationContext';
+import { useAnimation } from '../../contexts/AnimationContext';
 
 export default function QuadraticFunction() {
   const { quadraticState } = useAnimation();

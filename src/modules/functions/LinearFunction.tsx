@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useAnimation } from '../contexts/AnimationContext';
+import { useAnimation } from '../../contexts/AnimationContext';
 
 export default function LinearFunction() {
   const animationRef = useRef<number | undefined>(undefined);

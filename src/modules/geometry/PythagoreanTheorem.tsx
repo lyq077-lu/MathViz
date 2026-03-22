@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useAnimation } from '../contexts/AnimationContext';
+import { useAnimation } from '../../contexts/AnimationContext';
 
 export default function PythagoreanTheorem() {
   const { pythagoreanState } = useAnimation();

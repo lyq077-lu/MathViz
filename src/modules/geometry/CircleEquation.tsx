@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useAnimation } from '../contexts/AnimationContext';
+import { useAnimation } from '../../contexts/AnimationContext';
 
 export default function CircleEquation() {
   const { circleState } = useAnimation();
