@@ -4,18 +4,48 @@
 
 ## 🚀 已完成的功能
 
-### ✅ 三角函数可视化
+### M1: 函数可视化 (Function Visualization)
+
+#### ✅ 三角函数
 - 单位圆动画演示
 - 正弦/余弦实时计算
 - 角度滑块控制
 - 正弦波形图联动
 - 自动播放模式
 
-### ✅ 线性函数探索
+#### ✅ 线性函数
 - y = kx + b 参数调节
 - 斜率可视化（斜率三角形）
 - 截距实时显示
 - 关键点计算
+
+#### ✅ 二次函数
+- y = ax² + bx + c 参数调节
+- 抛物线实时绘制
+- 顶点、对称轴、零点显示
+- 顶点式自动转换
+
+### M2: 几何探索 (Geometry Explorer)
+
+#### ✅ 勾股定理
+- 拼图动画证明
+- 常用勾股数预设
+- 面积计算展示
+
+#### ✅ 圆的方程
+- 标准方程 (x-h)² + (y-k)² = r²
+- 圆心、半径实时控制
+- 点与圆位置关系判断
+
+### M3: 微积分入门 (Calculus Intro) - 待开发
+- 极限概念动画
+- 导数几何意义
+- 积分黎曼和
+
+### M4: 概率统计 (Probability & Statistics) - 待开发
+- 大数定律模拟
+- 正态分布生成
+- 贝叶斯定理可视化
 
 ## 🛠️ 技术栈
 
@@ -30,17 +60,28 @@
 
 ## 📁 项目结构
 
+按照[产品需求文档(PRD)](./docs/PRD.md)的四大模块分类组织：
+
 ```
 math-animations/
 ├── docs/
-│   └── PRD.md           # 产品需求文档
+│   └── PRD.md                    # 产品需求文档
 ├── src/
-│   ├── components/
-│   │   ├── UnitCircle.tsx       # 三角函数组件
-│   │   └── LinearFunction.tsx   # 线性函数组件
-│   ├── App.tsx          # 主应用
-│   ├── main.tsx         # 入口
-│   └── index.css        # 样式
+│   ├── modules/                  # 功能模块目录
+│   │   ├── functions/            # M1: 函数可视化
+│   │   │   ├── UnitCircle.tsx         # 三角函数 - 单位圆
+│   │   │   ├── LinearFunction.tsx     # 线性函数
+│   │   │   └── QuadraticFunction.tsx  # 二次函数
+│   │   ├── geometry/             # M2: 几何探索
+│   │   │   ├── PythagoreanTheorem.tsx # 勾股定理
+│   │   │   └── CircleEquation.tsx     # 圆的方程
+│   │   ├── calculus/             # M3: 微积分入门 (预留)
+│   │   └── probability/          # M4: 概率统计 (预留)
+│   ├── contexts/
+│   │   └── AnimationContext.tsx  # 动画状态管理
+│   ├── App.tsx                   # 主应用
+│   ├── main.tsx                  # 入口
+│   └── index.css                 # 样式
 ├── package.json
 └── README.md
 ```
