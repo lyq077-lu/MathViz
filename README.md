@@ -60,7 +60,7 @@
 
 ## 📁 项目结构
 
-按照[产品需求文档(PRD)](./docs/PRD.md)的四大模块分类组织：
+按照[产品需求文档(PRD)](./docs/PRD.md)的四大模块分类组织，采用一二级目录结构：
 
 ```
 math-animations/
@@ -69,14 +69,35 @@ math-animations/
 ├── src/
 │   ├── modules/                  # 功能模块目录
 │   │   ├── functions/            # M1: 函数可视化
-│   │   │   ├── UnitCircle.tsx         # 三角函数 - 单位圆
-│   │   │   ├── LinearFunction.tsx     # 线性函数
-│   │   │   └── QuadraticFunction.tsx  # 二次函数
+│   │   │   ├── trigonometry/     # 三角函数
+│   │   │   │   ├── UnitCircle.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── linear/           # 线性函数
+│   │   │   │   ├── LinearFunction.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── quadratic/        # 二次函数
+│   │   │   │   ├── QuadraticFunction.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── exponential/      # 指数对数 (预留)
+│   │   │   └── parametric/       # 参数方程 (预留)
 │   │   ├── geometry/             # M2: 几何探索
-│   │   │   ├── PythagoreanTheorem.tsx # 勾股定理
-│   │   │   └── CircleEquation.tsx     # 圆的方程
+│   │   │   ├── triangles/        # 三角形
+│   │   │   │   ├── PythagoreanTheorem.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── circles/          # 圆
+│   │   │   │   ├── CircleEquation.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── 3d/               # 立体几何 (预留)
+│   │   │   └── fractals/         # 分形几何 (预留)
 │   │   ├── calculus/             # M3: 微积分入门 (预留)
+│   │   │   ├── limits/           # 极限概念
+│   │   │   ├── derivatives/      # 导数几何
+│   │   │   ├── integrals/        # 积分概念
+│   │   │   └── diff-equations/   # 微分方程
 │   │   └── probability/          # M4: 概率统计 (预留)
+│   │       ├── laws/             # 大数定律
+│   │       ├── distributions/    # 概率分布
+│   │       └── bayesian/         # 贝叶斯定理
 │   ├── contexts/
 │   │   └── AnimationContext.tsx  # 动画状态管理
 │   ├── App.tsx                   # 主应用
