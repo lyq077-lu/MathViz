@@ -1,3 +1,2 @@
-// 极限概念可视化
-// TODO: 实现ε-δ定义动画演示
-export {};
+export { default as LimitConcept } from './LimitConcept';
+export { default } from './LimitConcept';

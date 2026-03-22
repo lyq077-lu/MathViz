@@ -1,12 +1,17 @@
 import { useState } from 'react';
-import { FunctionSquare, Shapes, Calculator, Circle, Triangle, TrendingUp, Play, Pause, RotateCcw, ChevronDown, ChevronRight, Box, FlaskConical, Dices } from 'lucide-react';
+import { FunctionSquare, Shapes, Calculator, Circle, Triangle, TrendingUp, Play, Pause, RotateCcw, ChevronDown, ChevronRight, Box, FlaskConical, Dices, Sigma, Infinity, Sparkles, Hexagon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AnimationProvider, useAnimation, type TrigonometryState, type LinearState, type QuadraticState, type PythagoreanState, type CircleState } from './contexts/AnimationContext';
 import UnitCircle from './modules/functions/trigonometry/UnitCircle';
 import LinearFunction from './modules/functions/linear/LinearFunction';
 import QuadraticFunction from './modules/functions/quadratic/QuadraticFunction';
+import ComplexNumbers from './modules/algebra/complex/ComplexNumbers';
 import PythagoreanTheorem from './modules/geometry/triangles/PythagoreanTheorem';
 import CircleEquation from './modules/geometry/circles/CircleEquation';
+import FractalGeometry from './modules/geometry/fractals/FractalGeometry';
+import LimitConcept from './modules/calculus/limits/LimitConcept';
+import DerivativeGeometry from './modules/calculus/derivatives/DerivativeGeometry';
+import LawOfLargeNumbers from './modules/probability/laws-of-large-numbers/LawOfLargeNumbers';
 
 // ============ 类型定义 ============
 interface SubTopic {
@@ -28,14 +33,15 @@ interface TopicGroup {
 // ============ 导航配置 ============
 const topicGroups: TopicGroup[] = [
   {
-    id: 'functions',
-    title: '函数可视化',
+    id: 'algebra',
+    title: '代数与函数',
     icon: <FunctionSquare className="w-5 h-5" />,
     color: 'cyan',
     subTopics: [
       { id: 'trigonometry', title: '三角函数', description: '单位圆与正弦波', icon: <Shapes className="w-4 h-4" />, component: <UnitCircle /> },
       { id: 'linear', title: '线性函数', description: 'y = kx + b', icon: <TrendingUp className="w-4 h-4" />, component: <LinearFunction /> },
       { id: 'quadratic', title: '二次函数', description: '抛物线顶点', icon: <Box className="w-4 h-4" />, component: <QuadraticFunction /> },
+      { id: 'complex', title: '复数', description: '复平面与运算', icon: <Hexagon className="w-4 h-4" />, component: <ComplexNumbers /> },
     ]
   },
   {
@@ -46,6 +52,7 @@ const topicGroups: TopicGroup[] = [
     subTopics: [
       { id: 'pythagorean', title: '勾股定理', description: '拼图动画证明', icon: <Triangle className="w-4 h-4" />, component: <PythagoreanTheorem /> },
       { id: 'circle', title: '圆的方程', description: '标准方程', icon: <Circle className="w-4 h-4" />, component: <CircleEquation /> },
+      { id: 'fractals', title: '分形几何', description: '自相似之美', icon: <Sparkles className="w-4 h-4" />, component: <FractalGeometry /> },
     ]
   },
   {
@@ -53,14 +60,19 @@ const topicGroups: TopicGroup[] = [
     title: '微积分入门',
     icon: <FlaskConical className="w-5 h-5" />,
     color: 'purple',
-    subTopics: []
+    subTopics: [
+      { id: 'limits', title: '极限概念', description: 'ε-δ定义', icon: <Infinity className="w-4 h-4" />, component: <LimitConcept /> },
+      { id: 'derivatives', title: '导数几何', description: '切线与斜率', icon: <Sigma className="w-4 h-4" />, component: <DerivativeGeometry /> },
+    ]
   },
   {
     id: 'probability',
     title: '概率统计',
     icon: <Dices className="w-5 h-5" />,
     color: 'green',
-    subTopics: []
+    subTopics: [
+      { id: 'law-of-large-numbers', title: '大数定律', description: '频率稳定性', icon: <TrendingUp className="w-4 h-4" />, component: <LawOfLargeNumbers /> },
+    ]
   },
 ];
 
@@ -70,7 +82,7 @@ const allTopics = topicGroups.flatMap(g => g.subTopics);
 // ============ 左侧主题栏（一二级目录结构） ============
 function LeftPanel() {
   const { activeTopic, setActiveTopic, reset } = useAnimation();
-  const [expandedGroups, setExpandedGroups] = useState<string[]>(['functions', 'geometry']);
+  const [expandedGroups, setExpandedGroups] = useState<string[]>(['algebra', 'geometry', 'calculus', 'probability']);
 
   const toggleGroup = (groupId: string) => {
     setExpandedGroups(prev => 
@@ -316,12 +328,22 @@ function RightPanel() {
         return <LinearControls state={linearState} isPlaying={isPlaying} setIsPlaying={setIsPlaying} />;
       case 'quadratic':
         return <QuadraticControls state={quadraticState} />;
+      case 'complex':
+        return <ComplexControls />;
       case 'pythagorean':
         return <PythagoreanControls state={pythagoreanState} isPlaying={isPlaying} setIsPlaying={setIsPlaying} />;
       case 'circle':
         return <CircleControls state={circleState} />;
+      case 'fractals':
+        return <FractalControls />;
+      case 'limits':
+        return <LimitControls />;
+      case 'derivatives':
+        return <DerivativeControls />;
+      case 'law-of-large-numbers':
+        return <LawOfLargeNumbersControls />;
       default:
-        return null;
+        return <PlaceholderControls topic={activeTopic} />;
     }
   };
 
@@ -636,6 +658,129 @@ function CircleControls({ state }: { state: CircleState }) {
               className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer" />
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ============ 新模块控制组件 ============
+function ComplexControls() {
+  return (
+    <div className="space-y-4">
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+        <h4 className="text-cyan-400 font-medium mb-3">复数概念</h4>
+        <div className="text-slate-300 text-sm space-y-2">
+          <p>复数 z = a + bi</p>
+          <p>其中 a 为实部，b 为虚部</p>
+          <p>模长 |z| = √(a² + b²)</p>
+        </div>
+      </div>
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+        <h4 className="text-white font-medium mb-3">操作说明</h4>
+        <ul className="text-slate-400 text-sm space-y-1">
+          <li>• 观察复数在复平面上的位置</li>
+          <li>• 查看模长和幅角的变化</li>
+          <li>• 理解直角坐标与极坐标转换</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function FractalControls() {
+  return (
+    <div className="space-y-4">
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+        <h4 className="text-orange-400 font-medium mb-3">分形几何</h4>
+        <div className="text-slate-300 text-sm space-y-2">
+          <p>谢尔宾斯基三角形</p>
+          <p>自相似的经典分形图案</p>
+        </div>
+      </div>
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+        <h4 className="text-white font-medium mb-3">动画说明</h4>
+        <ul className="text-slate-400 text-sm space-y-1">
+          <li>• 自动展示迭代过程</li>
+          <li>• 观察递归生成模式</li>
+          <li>• 从简单到复杂的演变</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function LimitControls() {
+  return (
+    <div className="space-y-4">
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+        <h4 className="text-purple-400 font-medium mb-3">极限定义</h4>
+        <div className="text-slate-300 text-sm space-y-2">
+          <p>ε-δ 定义: lim(x→a)f(x) = L</p>
+          <p>∀ε&gt;0, ∃δ&gt;0, 当|x-a|&lt;δ时, |f(x)-L|&lt;ε</p>
+        </div>
+      </div>
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+        <h4 className="text-white font-medium mb-3">可视化说明</h4>
+        <ul className="text-slate-400 text-sm space-y-1">
+          <li>• 紫色带: ε-邻域 (y值范围)</li>
+          <li>• 青色带: δ-邻域 (x值范围)</li>
+          <li>• 观察当x趋近于2时f(x)趋近于4</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function DerivativeControls() {
+  return (
+    <div className="space-y-4">
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+        <h4 className="text-purple-400 font-medium mb-3">导数定义</h4>
+        <div className="text-slate-300 text-sm space-y-2">
+          <p>f'(x) = lim(h→0) [f(x+h)-f(x)]/h</p>
+          <p>几何意义: 切线斜率</p>
+        </div>
+      </div>
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+        <h4 className="text-white font-medium mb-3">图例说明</h4>
+        <ul className="text-slate-400 text-sm space-y-1">
+          <li>• 紫色线: 切线 (导数)</li>
+          <li>• 橙色虚线: 割线 (差商)</li>
+          <li>• 绿色曲线: 函数 f(x)=x²</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function LawOfLargeNumbersControls() {
+  return (
+    <div className="space-y-4">
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+        <h4 className="text-green-400 font-medium mb-3">大数定律</h4>
+        <div className="text-slate-300 text-sm space-y-2">
+          <p>随着试验次数增加</p>
+          <p>事件频率趋近于其理论概率</p>
+        </div>
+      </div>
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+        <h4 className="text-white font-medium mb-3">操作说明</h4>
+        <ul className="text-slate-400 text-sm space-y-1">
+          <li>• 点击"开始"模拟掷硬币</li>
+          <li>• 观察正面频率趋近于50%</li>
+          <li>• 绿线表示50%基准线</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function PlaceholderControls({ topic }: { topic: string }) {
+  return (
+    <div className="space-y-4">
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+        <h4 className="text-white font-medium mb-3">{topic}</h4>
+        <p className="text-slate-400 text-sm">该模块暂无参数控制</p>
       </div>
     </div>
   );

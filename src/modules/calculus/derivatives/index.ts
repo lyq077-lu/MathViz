@@ -1,3 +1,2 @@
-// 导数几何意义可视化
-// TODO: 实现切线逼近、斜率变化动画
-export {};
+export { default as DerivativeGeometry } from './DerivativeGeometry';
+export { default } from './DerivativeGeometry';

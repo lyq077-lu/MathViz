@@ -1,3 +1,2 @@
-// 分形几何可视化
-// TODO: 实现谢尔宾斯基三角形、科赫雪花等分形动画
-export {};
+export { default as FractalGeometry } from './FractalGeometry';
+export { default } from './FractalGeometry';
