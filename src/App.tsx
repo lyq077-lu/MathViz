@@ -370,17 +370,17 @@ function RightPanel() {
       style={{ 
         position: 'fixed', 
         right: 0, 
-        top: '80px', 
+        top: 0, 
         width: '300px', 
         minWidth: '300px',
         maxWidth: '300px',
-        height: 'calc(100vh - 80px)',
+        height: '100vh',
         zIndex: 1000,
         flexShrink: 0
       }}
       className="bg-slate-900/95 backdrop-blur-md border-l border-slate-700 flex flex-col"
     >
-      {/* 用户登录区域 */}
+      {/* 用户登录区域 - 置顶 */}
       <div className="p-4 border-b border-slate-700 shrink-0">
         <GoogleAuthButton />
       </div>
