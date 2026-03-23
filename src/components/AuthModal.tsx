@@ -35,9 +35,22 @@ export function AuthModal() {
   if (isLoggedIn) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+    <div 
+      className="fixed inset-0 flex items-center justify-center"
+      style={{ 
+        zIndex: 99999,
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0
+      }}
+    >
       {/* 背景遮罩 */}
-      <div className="absolute inset-0 bg-slate-900/90 backdrop-blur-sm" />
+      <div 
+        className="absolute inset-0 bg-slate-900/90 backdrop-blur-sm"
+        style={{ position: 'absolute', inset: 0 }}
+      />
       
       {/* 登录弹窗 */}
       <motion.div
@@ -45,6 +58,7 @@ export function AuthModal() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
         className="relative w-full max-w-md mx-4"
+        style={{ position: 'relative', zIndex: 1 }}
       >
         <div className="bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-2xl">
           {/* 图标 */}
