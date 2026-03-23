@@ -104,9 +104,9 @@ function LeftPanel() {
   const getGroupStyles = (color: string, isActive: boolean) => {
     if (color === 'cyan') {
       return {
-        bg: isActive ? 'bg-cyan-500/20' : 'bg-slate-800/50',
-        border: isActive ? 'border-cyan-500/50' : 'border-slate-700',
-        text: isActive ? 'text-cyan-400' : 'text-slate-300',
+        bg: isActive ? 'bg-cyan-500/20' : 'bg-cyan-500/5',
+        border: isActive ? 'border-cyan-500/50' : 'border-cyan-500/20',
+        text: isActive ? 'text-cyan-400' : 'text-cyan-300/80',
         iconBg: isActive ? 'bg-cyan-500' : 'bg-cyan-500/20',
         iconText: isActive ? 'text-white' : 'text-cyan-400',
         indicator: 'bg-cyan-500'
@@ -114,9 +114,9 @@ function LeftPanel() {
     }
     if (color === 'orange') {
       return {
-        bg: isActive ? 'bg-orange-500/20' : 'bg-slate-800/50',
-        border: isActive ? 'border-orange-500/50' : 'border-slate-700',
-        text: isActive ? 'text-orange-400' : 'text-slate-300',
+        bg: isActive ? 'bg-orange-500/20' : 'bg-orange-500/5',
+        border: isActive ? 'border-orange-500/50' : 'border-orange-500/20',
+        text: isActive ? 'text-orange-400' : 'text-orange-300/80',
         iconBg: isActive ? 'bg-orange-500' : 'bg-orange-500/20',
         iconText: isActive ? 'text-white' : 'text-orange-400',
         indicator: 'bg-orange-500'
@@ -124,9 +124,9 @@ function LeftPanel() {
     }
     if (color === 'purple') {
       return {
-        bg: isActive ? 'bg-purple-500/20' : 'bg-slate-800/50',
-        border: isActive ? 'border-purple-500/50' : 'border-slate-700',
-        text: isActive ? 'text-purple-400' : 'text-slate-300',
+        bg: isActive ? 'bg-purple-500/20' : 'bg-purple-500/5',
+        border: isActive ? 'border-purple-500/50' : 'border-purple-500/20',
+        text: isActive ? 'text-purple-400' : 'text-purple-300/80',
         iconBg: isActive ? 'bg-purple-500' : 'bg-purple-500/20',
         iconText: isActive ? 'text-white' : 'text-purple-400',
         indicator: 'bg-purple-500'
@@ -134,18 +134,18 @@ function LeftPanel() {
     }
     if (color === 'green') {
       return {
-        bg: isActive ? 'bg-green-500/20' : 'bg-slate-800/50',
-        border: isActive ? 'border-green-500/50' : 'border-slate-700',
-        text: isActive ? 'text-green-400' : 'text-slate-300',
+        bg: isActive ? 'bg-green-500/20' : 'bg-green-500/5',
+        border: isActive ? 'border-green-500/50' : 'border-green-500/20',
+        text: isActive ? 'text-green-400' : 'text-green-300/80',
         iconBg: isActive ? 'bg-green-500' : 'bg-green-500/20',
         iconText: isActive ? 'text-white' : 'text-green-400',
         indicator: 'bg-green-500'
       };
     }
     return {
-      bg: isActive ? 'bg-cyan-500/20' : 'bg-slate-800/50',
-      border: isActive ? 'border-cyan-500/50' : 'border-slate-700',
-      text: isActive ? 'text-cyan-400' : 'text-slate-300',
+      bg: isActive ? 'bg-cyan-500/20' : 'bg-cyan-500/5',
+      border: isActive ? 'border-cyan-500/50' : 'border-cyan-500/20',
+      text: isActive ? 'text-cyan-400' : 'text-cyan-300/80',
       iconBg: isActive ? 'bg-cyan-500' : 'bg-cyan-500/20',
       iconText: isActive ? 'text-white' : 'text-cyan-400',
       indicator: 'bg-cyan-500'
@@ -203,7 +203,7 @@ function LeftPanel() {
                 className={`w-full p-3 rounded-lg border text-left transition-all ${
                   isGroupActive 
                     ? `${groupStyle.bg} ${groupStyle.border}` 
-                    : 'bg-slate-800/30 border-transparent hover:bg-slate-800/50'
+                    : `${groupStyle.bg} ${groupStyle.border} hover:bg-opacity-10`
                 } ${!hasSubTopics ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 <div className="flex items-center gap-3">
@@ -250,7 +250,7 @@ function LeftPanel() {
                             className={`w-full p-2.5 rounded-lg border text-left transition-all ${
                               isActive
                                 ? `${topicStyle.bg} ${topicStyle.border}`
-                                : 'bg-slate-800/20 border-transparent hover:bg-slate-800/40'
+                                : `${topicStyle.bg} ${topicStyle.border} hover:bg-opacity-10`
                             }`}
                           >
                             <div className="flex items-center gap-2">
