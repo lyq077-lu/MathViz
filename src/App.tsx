@@ -1,7 +1,16 @@
 import { useState } from 'react';
 import { FunctionSquare, Shapes, Calculator, Circle, Triangle, TrendingUp, Play, Pause, RotateCcw, ChevronDown, ChevronRight, Box, FlaskConical, Dices, Sigma, Infinity, Sparkles, Hexagon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
+// Tailwind safelist - 确保以下类名被包含在构建中
+// bg-cyan-500/5 bg-cyan-500/20 border-cyan-500/20 border-cyan-500/50 text-cyan-300/80 text-cyan-400
+// bg-orange-500/5 bg-orange-500/20 border-orange-500/20 border-orange-500/50 text-orange-300/80 text-orange-400
+// bg-purple-500/5 bg-purple-500/20 border-purple-500/20 border-purple-500/50 text-purple-300/80 text-purple-400
+// bg-green-500/5 bg-green-500/20 border-green-500/20 border-green-500/50 text-green-300/80 text-green-400
 import { AnimationProvider, useAnimation, type TrigonometryState, type LinearState, type QuadraticState, type PythagoreanState, type CircleState } from './contexts/AnimationContext';
+import { AuthProvider } from './contexts/AuthContext';
+import { GoogleAuthButton } from './components/GoogleAuthButton';
 import UnitCircle from './modules/functions/trigonometry/UnitCircle';
 import LinearFunction from './modules/functions/linear/LinearFunction';
 import QuadraticFunction from './modules/functions/quadratic/QuadraticFunction';
@@ -100,55 +109,58 @@ function LeftPanel() {
     );
   };
 
-  // 获取颜色样式 - 使用完整类名（Tailwind 需要静态类名）
+  // 获取颜色样式 - 使用内联样式确保颜色生效
   const getGroupStyles = (color: string, isActive: boolean) => {
-    if (color === 'cyan') {
-      return {
-        bg: isActive ? 'bg-cyan-500/20' : 'bg-cyan-500/5',
-        border: isActive ? 'border-cyan-500/50' : 'border-cyan-500/20',
-        text: isActive ? 'text-cyan-400' : 'text-cyan-300/80',
-        iconBg: isActive ? 'bg-cyan-500' : 'bg-cyan-500/20',
-        iconText: isActive ? 'text-white' : 'text-cyan-400',
-        indicator: 'bg-cyan-500'
-      };
-    }
-    if (color === 'orange') {
-      return {
-        bg: isActive ? 'bg-orange-500/20' : 'bg-orange-500/5',
-        border: isActive ? 'border-orange-500/50' : 'border-orange-500/20',
-        text: isActive ? 'text-orange-400' : 'text-orange-300/80',
-        iconBg: isActive ? 'bg-orange-500' : 'bg-orange-500/20',
-        iconText: isActive ? 'text-white' : 'text-orange-400',
-        indicator: 'bg-orange-500'
-      };
-    }
-    if (color === 'purple') {
-      return {
-        bg: isActive ? 'bg-purple-500/20' : 'bg-purple-500/5',
-        border: isActive ? 'border-purple-500/50' : 'border-purple-500/20',
-        text: isActive ? 'text-purple-400' : 'text-purple-300/80',
-        iconBg: isActive ? 'bg-purple-500' : 'bg-purple-500/20',
-        iconText: isActive ? 'text-white' : 'text-purple-400',
-        indicator: 'bg-purple-500'
-      };
-    }
-    if (color === 'green') {
-      return {
-        bg: isActive ? 'bg-green-500/20' : 'bg-green-500/5',
-        border: isActive ? 'border-green-500/50' : 'border-green-500/20',
-        text: isActive ? 'text-green-400' : 'text-green-300/80',
-        iconBg: isActive ? 'bg-green-500' : 'bg-green-500/20',
-        iconText: isActive ? 'text-white' : 'text-green-400',
-        indicator: 'bg-green-500'
-      };
-    }
+    const colors: Record<string, { bg: string; border: string; text: string; iconBg: string; iconText: string; indicator: string; bgInactive: string; borderInactive: string }> = {
+      cyan: {
+        bg: 'rgba(6, 182, 212, 0.2)',
+        border: 'rgba(6, 182, 212, 0.5)',
+        text: 'text-cyan-400',
+        iconBg: 'bg-cyan-500',
+        iconText: 'text-white',
+        indicator: 'bg-cyan-500',
+        bgInactive: 'rgba(6, 182, 212, 0.08)',
+        borderInactive: 'rgba(6, 182, 212, 0.25)'
+      },
+      orange: {
+        bg: 'rgba(249, 115, 22, 0.2)',
+        border: 'rgba(249, 115, 22, 0.5)',
+        text: 'text-orange-400',
+        iconBg: 'bg-orange-500',
+        iconText: 'text-white',
+        indicator: 'bg-orange-500',
+        bgInactive: 'rgba(249, 115, 22, 0.08)',
+        borderInactive: 'rgba(249, 115, 22, 0.25)'
+      },
+      purple: {
+        bg: 'rgba(168, 85, 247, 0.2)',
+        border: 'rgba(168, 85, 247, 0.5)',
+        text: 'text-purple-400',
+        iconBg: 'bg-purple-500',
+        iconText: 'text-white',
+        indicator: 'bg-purple-500',
+        bgInactive: 'rgba(168, 85, 247, 0.08)',
+        borderInactive: 'rgba(168, 85, 247, 0.25)'
+      },
+      green: {
+        bg: 'rgba(34, 197, 94, 0.2)',
+        border: 'rgba(34, 197, 94, 0.5)',
+        text: 'text-green-400',
+        iconBg: 'bg-green-500',
+        iconText: 'text-white',
+        indicator: 'bg-green-500',
+        bgInactive: 'rgba(34, 197, 94, 0.08)',
+        borderInactive: 'rgba(34, 197, 94, 0.25)'
+      }
+    };
+    const c = colors[color] || colors.cyan;
     return {
-      bg: isActive ? 'bg-cyan-500/20' : 'bg-cyan-500/5',
-      border: isActive ? 'border-cyan-500/50' : 'border-cyan-500/20',
-      text: isActive ? 'text-cyan-400' : 'text-cyan-300/80',
-      iconBg: isActive ? 'bg-cyan-500' : 'bg-cyan-500/20',
-      iconText: isActive ? 'text-white' : 'text-cyan-400',
-      indicator: 'bg-cyan-500'
+      bg: isActive ? c.bg : c.bgInactive,
+      border: isActive ? c.border : c.borderInactive,
+      text: c.text,
+      iconBg: c.iconBg,
+      iconText: isActive ? 'text-white' : c.text,
+      indicator: c.indicator
     };
   };
 
@@ -200,11 +212,10 @@ function LeftPanel() {
                 whileHover={{ scale: hasSubTopics ? 1.01 : 1 }}
                 whileTap={{ scale: hasSubTopics ? 0.99 : 1 }}
                 disabled={!hasSubTopics}
+                style={{ backgroundColor: groupStyle.bg, borderColor: groupStyle.border }}
                 className={`w-full p-3 rounded-lg border text-left transition-all ${
-                  isGroupActive 
-                    ? `${groupStyle.bg} ${groupStyle.border}` 
-                    : `${groupStyle.bg} ${groupStyle.border} hover:bg-opacity-10`
-                } ${!hasSubTopics ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                  !hasSubTopics ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                }`}
               >
                 <div className="flex items-center gap-3">
                   <div className={`p-2 rounded-lg shrink-0 ${groupStyle.iconBg} ${groupStyle.iconText}`}>
@@ -247,11 +258,8 @@ function LeftPanel() {
                             onClick={() => { setActiveTopic(topic.id); reset(); }}
                             whileHover={{ scale: 1.02, x: 2 }}
                             whileTap={{ scale: 0.98 }}
-                            className={`w-full p-2.5 rounded-lg border text-left transition-all ${
-                              isActive
-                                ? `${topicStyle.bg} ${topicStyle.border}`
-                                : `${topicStyle.bg} ${topicStyle.border} hover:bg-opacity-10`
-                            }`}
+                            style={{ backgroundColor: topicStyle.bg, borderColor: topicStyle.border }}
+                            className="w-full p-2.5 rounded-lg border text-left transition-all"
                           >
                             <div className="flex items-center gap-2">
                               <div className={`p-1.5 rounded shrink-0 ${topicStyle.iconBg} ${topicStyle.iconText}`}>
@@ -279,8 +287,13 @@ function LeftPanel() {
         })}
       </div>
 
-      {/* Footer */}
+      {/* Auth Section */}
       <div className="p-4 border-t border-slate-800 shrink-0">
+        <GoogleAuthButton />
+      </div>
+
+      {/* Footer */}
+      <div className="p-4 border-t border-slate-700 shrink-0">
         <p className="text-xs text-slate-500 text-center">MathViz © 2026</p>
       </div>
     </div>
@@ -902,11 +915,19 @@ function AppContent() {
   );
 }
 
+// Google OAuth 客户端 ID
+// 注意：请替换为你从 Google Cloud Console 获取的实际客户端 ID
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID';
+
 function App() {
   return (
-    <AnimationProvider>
-      <AppContent />
-    </AnimationProvider>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <AuthProvider>
+        <AnimationProvider>
+          <AppContent />
+        </AnimationProvider>
+      </AuthProvider>
+    </GoogleOAuthProvider>
   );
 }
 
