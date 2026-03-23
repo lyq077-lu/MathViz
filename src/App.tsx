@@ -295,39 +295,33 @@ function LeftPanel() {
   );
 }
 
-// ============ 播放控制 - 右上角悬浮 ============
-function PlaybackControl() {
+// ============ 播放控制组件 ============
+function PlaybackControlInline() {
   const { isPlaying, setIsPlaying, reset } = useAnimation();
 
   return (
-    <div 
-      style={{ 
-        position: 'fixed', 
-        right: '16px', 
-        top: '16px', 
-        zIndex: 1001 
-      }}
-      className="bg-slate-900/95 backdrop-blur-md border border-slate-700 rounded-xl p-3 shadow-2xl flex items-center gap-2"
-    >
-      <span className="text-slate-400 text-sm mr-2 hidden sm:inline">播放控制</span>
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => setIsPlaying(!isPlaying)}
-        className="bg-cyan-600 hover:bg-cyan-500 text-white py-2 px-4 rounded-lg flex items-center justify-center gap-2"
-      >
-        {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-        <span className="text-sm">{isPlaying ? '暂停' : '播放'}</span>
-      </motion.button>
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={reset}
-        className="bg-slate-700 hover:bg-slate-600 text-white py-2 px-3 rounded-lg"
-        title="重置"
-      >
-        <RotateCcw className="w-4 h-4" />
-      </motion.button>
+    <div className="bg-slate-800/50 rounded-xl p-3 border border-slate-700">
+      <p className="text-xs text-slate-400 mb-2">播放控制</p>
+      <div className="flex items-center gap-2">
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => setIsPlaying(!isPlaying)}
+          className="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white py-2 px-3 rounded-lg flex items-center justify-center gap-2"
+        >
+          {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+          <span className="text-sm">{isPlaying ? '暂停' : '播放'}</span>
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={reset}
+          className="bg-slate-700 hover:bg-slate-600 text-white py-2 px-3 rounded-lg"
+          title="重置"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </motion.button>
+      </div>
     </div>
   );
 }
@@ -389,6 +383,10 @@ function RightPanel() {
       {/* 用户登录区域 */}
       <div className="p-4 border-b border-slate-700 shrink-0">
         <GoogleAuthButton />
+      </div>
+      {/* 播放控制 */}
+      <div className="p-4 border-b border-slate-700 shrink-0">
+        <PlaybackControlInline />
       </div>
       <div className="p-4 border-b border-slate-700 shrink-0">
         <h2 className="text-lg font-bold text-white">参数设置</h2>
@@ -907,7 +905,6 @@ function AppContent() {
   return (
     <>
       <LeftPanel />
-      <PlaybackControl />
       <RightPanel />
       <MainContent />
     </>
