@@ -287,13 +287,8 @@ function LeftPanel() {
         })}
       </div>
 
-      {/* Auth Section */}
-      <div className="p-4 border-t border-slate-800 shrink-0">
-        <GoogleAuthButton />
-      </div>
-
       {/* Footer */}
-      <div className="p-4 border-t border-slate-700 shrink-0">
+      <div className="p-4 border-t border-slate-800 shrink-0">
         <p className="text-xs text-slate-500 text-center">MathViz © 2026</p>
       </div>
     </div>
@@ -391,6 +386,10 @@ function RightPanel() {
       }}
       className="bg-slate-900/95 backdrop-blur-md border-l border-slate-700 flex flex-col"
     >
+      {/* 用户登录区域 */}
+      <div className="p-4 border-b border-slate-700 shrink-0">
+        <GoogleAuthButton />
+      </div>
       <div className="p-4 border-b border-slate-700 shrink-0">
         <h2 className="text-lg font-bold text-white">参数设置</h2>
         <p className="text-xs text-slate-500">调整动画参数</p>
