@@ -9,8 +9,8 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 // bg-purple-500/5 bg-purple-500/20 border-purple-500/20 border-purple-500/50 text-purple-300/80 text-purple-400
 // bg-green-500/5 bg-green-500/20 border-green-500/20 border-green-500/50 text-green-300/80 text-green-400
 import { AnimationProvider, useAnimation, type TrigonometryState, type LinearState, type QuadraticState, type PythagoreanState, type CircleState } from './contexts/AnimationContext';
-import { AuthProvider } from './contexts/AuthContext';
-import { GoogleAuthButton } from './components/GoogleAuthButton';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AuthModal, UserProfile } from './components/AuthModal';
 import UnitCircle from './modules/functions/trigonometry/UnitCircle';
 import LinearFunction from './modules/functions/linear/LinearFunction';
 import QuadraticFunction from './modules/functions/quadratic/QuadraticFunction';
@@ -382,7 +382,7 @@ function RightPanel() {
     >
       {/* 用户登录区域 - 置顶 */}
       <div className="p-4 border-b border-slate-700 shrink-0">
-        <GoogleAuthButton />
+        <UserProfile />
       </div>
       {/* 播放控制 */}
       <div className="p-4 border-b border-slate-700 shrink-0">
@@ -902,11 +902,15 @@ function BayesianControls() {
 
 // ============ 主应用 ============
 function AppContent() {
+  const { isLoggedIn } = useAuth();
+
   return (
     <>
       <LeftPanel />
       <RightPanel />
       <MainContent />
+      {/* 未登录时显示登录弹窗 */}
+      {!isLoggedIn && <AuthModal />}
     </>
   );
 }
