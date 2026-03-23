@@ -127,29 +127,40 @@ export function UserProfile() {
   }
 
   return (
-    <div className="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
-      {user.picture ? (
-        <img
-          src={user.picture}
-          alt={user.name}
-          className="w-10 h-10 rounded-full border border-slate-600"
-        />
-      ) : (
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-medium">
-          {user.name.charAt(0).toUpperCase()}
+    <div className="bg-slate-800/50 rounded-lg border border-slate-700 p-3">
+      <div className="flex items-center gap-3">
+        {user.picture ? (
+          <img
+            src={user.picture}
+            alt={user.name}
+            className="w-10 h-10 rounded-full border border-slate-600 shrink-0"
+          />
+        ) : (
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-medium shrink-0">
+            {user.name.charAt(0).toUpperCase()}
+          </div>
+        )}
+        <div className="flex-1 min-w-0 overflow-hidden">
+          <p className="text-sm text-white truncate">{user.name}</p>
+          <p className="text-xs text-slate-400 truncate">{user.email}</p>
         </div>
-      )}
-      <div className="flex-1 min-w-0">
-        <p className="text-sm text-white truncate">{user.name}</p>
-        <p className="text-xs text-slate-400 truncate">{user.email}</p>
+        <button
+          onClick={handleLogout}
+          className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors shrink-0"
+          title="退出登录"
+        >
+          <LogOut className="w-4 h-4" />
+        </button>
       </div>
-      <button
-        onClick={handleLogout}
-        className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-        title="退出登录"
-      >
-        <LogOut className="w-4 h-4" />
-      </button>
+      <div className="mt-3 pt-3 border-t border-slate-700/50 flex justify-center">
+        <button
+          onClick={handleLogout}
+          className="w-full py-2 px-3 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-sm rounded-lg transition-colors flex items-center justify-center gap-2"
+        >
+          <LogOut className="w-4 h-4" />
+          <span>退出登录</span>
+        </button>
+      </div>
     </div>
   );
 }
