@@ -222,14 +222,32 @@ export function LandingPage() {
       {/* 居中登录弹窗 */}
       <AnimatePresence>
         {showLogin && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div 
+            className="fixed inset-0 z-[9999] flex items-center justify-center"
+            style={{ 
+              position: 'fixed', 
+              top: 0, 
+              left: 0, 
+              right: 0, 
+              bottom: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '16px'
+            }}
+          >
             {/* 背景遮罩 */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowLogin(false)}
-              className="absolute inset-0 bg-slate-900/90 backdrop-blur-sm"
+              style={{ 
+                position: 'absolute', 
+                inset: 0, 
+                backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                backdropFilter: 'blur(4px)'
+              }}
             />
             
             {/* 居中登录框 */}
@@ -238,36 +256,75 @@ export function LandingPage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-md"
+              style={{ 
+                position: 'relative', 
+                width: '100%', 
+                maxWidth: '400px',
+                zIndex: 1
+              }}
             >
-              <div className="bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-2xl">
+              <div 
+                className="bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl"
+                style={{ padding: '32px', backgroundColor: '#1e293b', border: '1px solid #334155' }}
+              >
                 {/* 关闭按钮 */}
                 <button
                   onClick={() => setShowLogin(false)}
-                  className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
+                  style={{ 
+                    position: 'absolute', 
+                    top: '16px', 
+                    right: '16px',
+                    padding: '8px',
+                    color: '#94a3b8',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer'
+                  }}
+                  className="hover:text-white hover:bg-slate-700"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg style={{ width: '20px', height: '20px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
 
                 {/* 图标 */}
-                <div className="flex justify-center mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center">
-                    <Lock className="w-8 h-8 text-white" />
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+                  <div 
+                    style={{ 
+                      width: '64px', 
+                      height: '64px',
+                      background: 'linear-gradient(135deg, #06b6d4, #2563eb)',
+                      borderRadius: '16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <Lock style={{ width: '32px', height: '32px', color: 'white' }} />
                   </div>
                 </div>
                 
                 {/* 标题 */}
-                <h2 className="text-2xl font-bold text-white text-center mb-2">
+                <h2 style={{ 
+                  fontSize: '24px', 
+                  fontWeight: 'bold', 
+                  color: 'white', 
+                  textAlign: 'center',
+                  marginBottom: '8px'
+                }}>
                   欢迎访问 MathViz
                 </h2>
-                <p className="text-slate-400 text-center mb-8">
+                <p style={{ 
+                  color: '#94a3b8', 
+                  textAlign: 'center', 
+                  marginBottom: '32px'
+                }}>
                   登录后即可开始学习之旅
                 </p>
                 
                 {/* Google 登录按钮 - 居中 */}
-                <div className="flex justify-center">
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
                   <GoogleLogin
                     onSuccess={handleSuccess}
                     onError={handleError}
@@ -281,8 +338,16 @@ export function LandingPage() {
                 </div>
                 
                 {/* 提示 */}
-                <div className="mt-6 pt-6 border-t border-slate-700">
-                  <p className="text-xs text-slate-500 text-center">
+                <div style={{ 
+                  marginTop: '24px', 
+                  paddingTop: '24px', 
+                  borderTop: '1px solid #334155'
+                }}>
+                  <p style={{ 
+                    fontSize: '12px', 
+                    color: '#64748b', 
+                    textAlign: 'center'
+                  }}>
                     使用 Google 账号快速登录，无需额外注册
                   </p>
                 </div>
