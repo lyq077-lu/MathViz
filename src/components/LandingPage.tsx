@@ -3,7 +3,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { Calculator, Shapes, FunctionSquare, Triangle, Sparkles, ChevronRight, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface GoogleJwtPayload {
   sub: string;
@@ -47,17 +47,6 @@ const features = [
 export function LandingPage() {
   const { setUser } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
-  const [loginReady, setLoginReady] = useState(false);
-
-  // 弹窗打开后延迟渲染Google登录按钮，确保容器已准备好
-  useEffect(() => {
-    if (showLogin) {
-      const timer = setTimeout(() => setLoginReady(true), 100);
-      return () => clearTimeout(timer);
-    } else {
-      setLoginReady(false);
-    }
-  }, [showLogin]);
 
   const handleSuccess = (credentialResponse: { credential?: string }) => {
     if (credentialResponse.credential) {
@@ -335,19 +324,24 @@ export function LandingPage() {
                 </p>
                 
                 {/* Google 登录按钮 - 居中 */}
-                <div style={{ display: 'flex', justifyContent: 'center', minHeight: '40px' }}>
-                  {loginReady && (
-                    <GoogleLogin
-                      onSuccess={handleSuccess}
-                      onError={handleError}
-                      useOneTap={false}
-                      theme="filled_black"
-                      size="large"
-                      width="280"
-                      text="signin_with"
-                      shape="rectangular"
-                    />
-                  )}
+                <div 
+                  style={{ 
+                    display: 'flex', 
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    minHeight: '50px'
+                  }}
+                >
+                  <GoogleLogin
+                    onSuccess={handleSuccess}
+                    onError={handleError}
+                    useOneTap={false}
+                    theme="filled_black"
+                    size="large"
+                    width="280"
+                    text="signin_with"
+                    shape="rectangular"
+                  />
                 </div>
                 
                 {/* 提示 */}
