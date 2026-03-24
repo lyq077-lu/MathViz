@@ -327,24 +327,26 @@ export function LandingPage() {
                 
                 {/* Google 登录按钮 - 居中 */}
                 <div 
-                  id="google-login-container"
                   style={{ 
                     display: 'flex', 
                     justifyContent: 'center',
-                    minHeight: '44px'
+                    minHeight: '44px',
+                    position: 'relative',
+                    zIndex: 10
                   }}
                 >
-                  <GoogleLogin
-                    onSuccess={handleSuccess}
-                    onError={handleError}
-                    useOneTap={false}
-                    theme="filled_black"
-                    size="large"
-                    width="280"
-                    text="signin_with"
-                    shape="rectangular"
-                    auto_select={false}
-                  />
+                  <div style={{ transform: 'scale(1.1)' }}>
+                    <GoogleLogin
+                      onSuccess={handleSuccess}
+                      onError={handleError}
+                      useOneTap={false}
+                      theme="filled_black"
+                      size="large"
+                      width="250"
+                      text="signin_with"
+                      shape="rectangular"
+                    />
+                  </div>
                 </div>
                 
                 {/* 提示 */}
