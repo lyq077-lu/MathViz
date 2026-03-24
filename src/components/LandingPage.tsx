@@ -1,9 +1,9 @@
 import { useAuth } from '../contexts/AuthContext';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
-import { Calculator, Shapes, FunctionSquare, Triangle, Sparkles, ChevronRight, Lock } from 'lucide-react';
+import { Calculator, Shapes, FunctionSquare, Triangle, Sparkles, ChevronRight, Lock, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface GoogleJwtPayload {
   sub: string;
@@ -47,6 +47,7 @@ const features = [
 export function LandingPage() {
   const { setUser } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
+  const [loginKey, setLoginKey] = useState(0);
 
   const handleSuccess = (credentialResponse: { credential?: string }) => {
     if (credentialResponse.credential) {
@@ -64,6 +65,13 @@ export function LandingPage() {
   const handleError = () => {
     console.error('Google 登录失败');
   };
+
+  // 当弹窗打开时，强制重新渲染Google登录按钮
+  useEffect(() => {
+    if (showLogin) {
+      setLoginKey(prev => prev + 1);
+    }
+  }, [showLogin]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col">
@@ -222,138 +230,90 @@ export function LandingPage() {
       {/* 居中登录弹窗 */}
       <AnimatePresence>
         {showLogin && (
-          <div 
-            className="fixed inset-0 z-[9999] flex items-center justify-center"
-            style={{ 
-              position: 'fixed', 
-              top: 0, 
-              left: 0, 
-              right: 0, 
-              bottom: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '16px'
-            }}
+          <motion.div 
+            className="fixed inset-0 z-[9999]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
             {/* 背景遮罩 */}
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-slate-900/90"
               onClick={() => setShowLogin(false)}
-              style={{ 
-                position: 'absolute', 
-                inset: 0, 
-                backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                backdropFilter: 'blur(4px)'
-              }}
+              style={{ backdropFilter: 'blur(8px)' }}
             />
             
-            {/* 居中登录框 */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              style={{ 
-                position: 'relative', 
-                width: '100%', 
-                maxWidth: '400px',
-                zIndex: 1
-              }}
+            {/* 居中容器 */}
+            <div 
+              className="absolute inset-0 flex items-center justify-center p-4"
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
-              <div 
-                className="bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl"
-                style={{ padding: '32px', backgroundColor: '#1e293b', border: '1px solid #334155' }}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                className="relative w-full max-w-sm"
               >
-                {/* 关闭按钮 */}
-                <button
-                  onClick={() => setShowLogin(false)}
-                  style={{ 
-                    position: 'absolute', 
-                    top: '16px', 
-                    right: '16px',
-                    padding: '8px',
-                    color: '#94a3b8',
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: 'pointer'
-                  }}
-                  className="hover:text-white hover:bg-slate-700"
-                >
-                  <svg style={{ width: '20px', height: '20px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
+                <div className="bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden">
+                  {/* 头部背景 */}
+                  <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 p-6 pb-0">
+                    {/* 关闭按钮 */}
+                    <button
+                      onClick={() => setShowLogin(false)}
+                      className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
 
-                {/* 图标 */}
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
-                  <div 
-                    style={{ 
-                      width: '64px', 
-                      height: '64px',
-                      background: 'linear-gradient(135deg, #06b6d4, #2563eb)',
-                      borderRadius: '16px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                  >
-                    <Lock style={{ width: '32px', height: '32px', color: 'white' }} />
+                    {/* 图标 */}
+                    <div className="flex justify-center mb-4">
+                      <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <Lock className="w-8 h-8 text-white" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* 内容区域 */}
+                  <div className="p-6 pt-4">
+                    {/* 标题 */}
+                    <h2 className="text-2xl font-bold text-white text-center mb-2">
+                      欢迎访问 MathViz
+                    </h2>
+                    <p className="text-slate-400 text-center mb-6">
+                      登录后即可开始学习之旅
+                    </p>
+                    
+                    {/* Google 登录按钮容器 - 确保可见 */}
+                    <div 
+                      className="flex justify-center bg-slate-900/50 rounded-xl p-4 border border-slate-700/50"
+                      style={{ minHeight: '50px' }}
+                    >
+                      <div key={loginKey} className="google-login-wrapper">
+                        <GoogleLogin
+                          onSuccess={handleSuccess}
+                          onError={handleError}
+                          useOneTap={false}
+                          theme="filled_black"
+                          size="large"
+                          width="250"
+                          text="signin_with"
+                          shape="rectangular"
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* 提示 */}
+                    <div className="mt-4 text-center">
+                      <p className="text-xs text-slate-500">
+                        使用 Google 账号快速登录
+                      </p>
+                    </div>
                   </div>
                 </div>
-                
-                {/* 标题 */}
-                <h2 style={{ 
-                  fontSize: '24px', 
-                  fontWeight: 'bold', 
-                  color: 'white', 
-                  textAlign: 'center',
-                  marginBottom: '8px'
-                }}>
-                  欢迎访问 MathViz
-                </h2>
-                <p style={{ 
-                  color: '#94a3b8', 
-                  textAlign: 'center', 
-                  marginBottom: '32px'
-                }}>
-                  登录后即可开始学习之旅
-                </p>
-                
-                {/* Google 登录按钮 - 居中 */}
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <GoogleLogin
-                    onSuccess={handleSuccess}
-                    onError={handleError}
-                    useOneTap={false}
-                    theme="filled_black"
-                    size="large"
-                    width="280"
-                    text="signin_with"
-                    shape="rectangular"
-                  />
-                </div>
-                
-                {/* 提示 */}
-                <div style={{ 
-                  marginTop: '24px', 
-                  paddingTop: '24px', 
-                  borderTop: '1px solid #334155'
-                }}>
-                  <p style={{ 
-                    fontSize: '12px', 
-                    color: '#64748b', 
-                    textAlign: 'center'
-                  }}>
-                    使用 Google 账号快速登录，无需额外注册
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          </div>
+              </motion.div>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
