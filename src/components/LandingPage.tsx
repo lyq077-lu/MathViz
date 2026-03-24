@@ -3,10 +3,10 @@ import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { 
   Calculator, Shapes, FunctionSquare, Triangle, Sparkles, ChevronRight, 
-  X, Play, Eye, BookOpen, Lock, Atom, Binary, Sigma, Waves, Zap
+  X, Play, Eye, BookOpen, Lock
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface GoogleJwtPayload {
   sub: string;
@@ -24,7 +24,7 @@ const features = [
     shortDesc: '单位圆与正弦波可视化',
     description: '通过动态单位圆，直观理解三角函数的本质。观察角度变化时正弦、余弦值的动态生成过程，掌握三角函数的周期性特征。',
     color: 'cyan',
-    gradient: 'from-cyan-500 to-blue-600',
+    bgColor: '#06b6d4',
     highlights: [
       { icon: <Play className="w-4 h-4" />, text: '动态演示正弦、余弦生成过程' },
       { icon: <Eye className="w-4 h-4" />, text: '可视化角度与函数值关系' },
@@ -39,7 +39,7 @@ const features = [
     shortDesc: '线性、二次、复数运算',
     description: '探索各类函数图像，理解代数之美。从线性函数到二次函数，从实数到复数，全面掌握代数核心概念。',
     color: 'orange',
-    gradient: 'from-orange-500 to-red-600',
+    bgColor: '#f97316',
     highlights: [
       { icon: <Play className="w-4 h-4" />, text: '线性函数 y = kx + b 动态展示' },
       { icon: <Eye className="w-4 h-4" />, text: '二次函数顶点与对称轴可视化' },
@@ -54,7 +54,7 @@ const features = [
     shortDesc: '勾股定理、圆方程、分形',
     description: '用动画证明几何定理，探索分形的自相似之美。从经典定理到现代分形几何，领略数学的几何魅力。',
     color: 'purple',
-    gradient: 'from-purple-500 to-pink-600',
+    bgColor: '#a855f7',
     highlights: [
       { icon: <Play className="w-4 h-4" />, text: '勾股定理拼图动画证明' },
       { icon: <Eye className="w-4 h-4" />, text: '圆的标准方程可视化' },
@@ -69,7 +69,7 @@ const features = [
     shortDesc: '大数定律、正态分布、贝叶斯',
     description: '通过模拟实验理解概率统计的核心概念。从掷硬币到贝叶斯定理，用数据揭示随机现象背后的规律。',
     color: 'green',
-    gradient: 'from-green-500 to-emerald-600',
+    bgColor: '#22c55e',
     highlights: [
       { icon: <Play className="w-4 h-4" />, text: '掷硬币模拟大数定律' },
       { icon: <Eye className="w-4 h-4" />, text: '正态分布钟形曲线生成' },
@@ -79,28 +79,9 @@ const features = [
   },
 ];
 
-// 浮动装饰元素
-const floatingIcons = [
-  { icon: <Atom className="w-8 h-8" />, color: 'text-cyan-500/20', top: '10%', left: '5%', delay: 0 },
-  { icon: <Binary className="w-6 h-6" />, color: 'text-purple-500/20', top: '20%', right: '8%', delay: 0.5 },
-  { icon: <Sigma className="w-10 h-10" />, color: 'text-orange-500/20', top: '60%', left: '3%', delay: 1 },
-  { icon: <Waves className="w-7 h-7" />, color: 'text-green-500/20', bottom: '20%', right: '5%', delay: 1.5 },
-  { icon: <Zap className="w-6 h-6" />, color: 'text-pink-500/20', top: '40%', right: '3%', delay: 2 },
-];
-
 export function LandingPage() {
   const { setUser, isLoggedIn } = useAuth();
   const [selectedFeature, setSelectedFeature] = useState<typeof features[0] | null>(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-  // 鼠标跟随效果
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
 
   const handleSuccess = (credentialResponse: { credential?: string }) => {
     if (credentialResponse.credential) {
@@ -122,106 +103,98 @@ export function LandingPage() {
   const feature = selectedFeature;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col relative overflow-hidden">
-      {/* 动态背景效果 */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    <div 
+      className="min-h-screen flex flex-col relative overflow-hidden"
+      style={{
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)'
+      }}
+    >
+      {/* 背景装饰 - 使用SVG确保显示 */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
         {/* 网格背景 */}
-        <div 
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(6, 182, 212, 0.5) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(6, 182, 212, 0.5) 1px, transparent 1px)
-            `,
-            backgroundSize: '60px 60px'
-          }}
-        />
+        <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+              <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#06b6d4" strokeWidth="1"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid)" />
+        </svg>
         
-        {/* 渐变光晕 */}
+        {/* 浮动装饰圆形 */}
         <div 
-          className="absolute w-[800px] h-[800px] rounded-full opacity-20 blur-3xl"
+          className="absolute rounded-full opacity-20"
           style={{
-            background: 'radial-gradient(circle, rgba(6, 182, 212, 0.4) 0%, transparent 70%)',
-            left: `${mousePosition.x * 0.05}px`,
-            top: `${mousePosition.y * 0.05}px`,
+            width: '600px',
+            height: '600px',
+            background: 'radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, transparent 70%)',
+            top: '-200px',
+            right: '-200px',
+            filter: 'blur(60px)'
+          }}
+        />
+        <div 
+          className="absolute rounded-full opacity-20"
+          style={{
+            width: '500px',
+            height: '500px',
+            background: 'radial-gradient(circle, rgba(168, 85, 247, 0.3) 0%, transparent 70%)',
+            bottom: '-150px',
+            left: '-150px',
+            filter: 'blur(60px)'
+          }}
+        />
+        <div 
+          className="absolute rounded-full opacity-15"
+          style={{
+            width: '400px',
+            height: '400px',
+            background: 'radial-gradient(circle, rgba(34, 197, 94, 0.3) 0%, transparent 70%)',
+            top: '50%',
+            left: '50%',
             transform: 'translate(-50%, -50%)',
-            transition: 'left 0.3s ease-out, top 0.3s ease-out'
+            filter: 'blur(80px)'
           }}
         />
-        <div 
-          className="absolute w-[600px] h-[600px] rounded-full opacity-15 blur-3xl"
-          style={{
-            background: 'radial-gradient(circle, rgba(168, 85, 247, 0.4) 0%, transparent 70%)',
-            right: `${mousePosition.x * 0.03}px`,
-            bottom: `${mousePosition.y * 0.03}px`,
-            transform: 'translate(50%, 50%)',
-            transition: 'right 0.3s ease-out, bottom 0.3s ease-out'
-          }}
-        />
-
-        {/* 浮动装饰图标 */}
-        {floatingIcons.map((item, index) => (
-          <motion.div
-            key={index}
-            className={`absolute ${item.color} ${item.left ? `left-[${item.left}]` : ''} ${item.right ? `right-[${item.right}]` : ''}`}
-            style={{
-              top: item.top,
-              bottom: item.bottom,
-              left: item.left,
-              right: item.right,
-            }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ 
-              opacity: 1, 
-              y: [0, -15, 0],
-            }}
-            transition={{
-              opacity: { delay: item.delay, duration: 0.5 },
-              y: { delay: item.delay, duration: 4, repeat: Infinity, ease: "easeInOut" }
-            }}
-          >
-            {item.icon}
-          </motion.div>
-        ))}
       </div>
 
-      {/* 导航栏 - 玻璃拟态效果 */}
-      <nav className="w-full px-6 py-4 border-b border-slate-700/30 bg-slate-900/60 backdrop-blur-xl sticky top-0 z-50">
+      {/* 导航栏 */}
+      <nav 
+        className="w-full px-6 py-4 sticky top-0 z-50"
+        style={{
+          backgroundColor: 'rgba(15, 23, 42, 0.8)',
+          backdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(51, 65, 85, 0.5)'
+        }}
+      >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <motion.div 
-            className="flex items-center gap-3"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
+          <div className="flex items-center gap-3">
+            <div 
+              className="w-10 h-10 rounded-xl flex items-center justify-center"
+              style={{
+                background: 'linear-gradient(135deg, #06b6d4, #2563eb)',
+                boxShadow: '0 4px 20px rgba(6, 182, 212, 0.3)'
+              }}
+            >
               <Calculator className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-                MathViz
-              </h1>
-              <p className="text-xs text-slate-500">数学可视化</p>
+              <h1 className="text-xl font-bold text-white">MathViz</h1>
+              <p className="text-xs text-slate-400">数学可视化</p>
             </div>
-          </motion.div>
+          </div>
           
           {/* 顶部登录按钮 */}
           {!isLoggedIn && (
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
-              <GoogleLogin
-                onSuccess={handleSuccess}
-                onError={handleError}
-                useOneTap={false}
-                theme="filled_black"
-                size="medium"
-                text="signin_with"
-                shape="rectangular"
-              />
-            </motion.div>
+            <GoogleLogin
+              onSuccess={handleSuccess}
+              onError={handleError}
+              useOneTap={false}
+              theme="filled_black"
+              size="medium"
+              text="signin_with"
+              shape="rectangular"
+            />
           )}
         </div>
       </nav>
@@ -239,17 +212,25 @@ export function LandingPage() {
                 transition={{ duration: 0.6 }}
                 className="space-y-6"
               >
-                <motion.div 
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/30 backdrop-blur-sm"
-                  whileHover={{ scale: 1.02 }}
+                <div 
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full"
+                  style={{
+                    backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                    border: '1px solid rgba(6, 182, 212, 0.3)'
+                  }}
                 >
-                  <Sparkles className="w-4 h-4 text-cyan-400" />
-                  <span className="text-sm text-cyan-400 font-medium">免费在线学习工具</span>
-                </motion.div>
+                  <Sparkles className="w-4 h-4" style={{ color: '#22d3ee' }} />
+                  <span className="text-sm font-medium" style={{ color: '#22d3ee' }}>免费在线学习工具</span>
+                </div>
                 
                 <h2 className="text-5xl lg:text-6xl font-bold text-white leading-tight">
                   让数学
-                  <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+                  <span 
+                    className="bg-clip-text text-transparent"
+                    style={{
+                      backgroundImage: 'linear-gradient(90deg, #22d3ee, #60a5fa, #a78bfa)'
+                    }}
+                  >
                     动起来
                   </span>
                 </h2>
@@ -261,37 +242,32 @@ export function LandingPage() {
                 </p>
 
                 <div className="flex items-center gap-6 text-sm">
-                  <motion.div 
-                    className="flex items-center gap-2 text-slate-400"
-                    whileHover={{ x: 2 }}
-                  >
-                    <div className="w-2 h-2 rounded-full bg-green-500 shadow-lg shadow-green-500/50"></div>
+                  <div className="flex items-center gap-2 text-slate-400">
+                    <div 
+                      className="w-2 h-2 rounded-full"
+                      style={{ backgroundColor: '#22c55e', boxShadow: '0 0 8px #22c55e' }}
+                    />
                     <span>免费使用</span>
-                  </motion.div>
-                  <motion.div 
-                    className="flex items-center gap-2 text-slate-400"
-                    whileHover={{ x: 2 }}
-                  >
-                    <div className="w-2 h-2 rounded-full bg-cyan-500 shadow-lg shadow-cyan-500/50"></div>
+                  </div>
+                  <div className="flex items-center gap-2 text-slate-400">
+                    <div 
+                      className="w-2 h-2 rounded-full"
+                      style={{ backgroundColor: '#06b6d4', boxShadow: '0 0 8px #06b6d4' }}
+                    />
                     <span>无需注册</span>
-                  </motion.div>
-                  <motion.div 
-                    className="flex items-center gap-2 text-slate-400"
-                    whileHover={{ x: 2 }}
-                  >
-                    <div className="w-2 h-2 rounded-full bg-purple-500 shadow-lg shadow-purple-500/50"></div>
+                  </div>
+                  <div className="flex items-center gap-2 text-slate-400">
+                    <div 
+                      className="w-2 h-2 rounded-full"
+                      style={{ backgroundColor: '#a855f7', boxShadow: '0 0 8px #a855f7' }}
+                    />
                     <span>即开即用</span>
-                  </motion.div>
+                  </div>
                 </div>
               </motion.div>
 
               {/* 右侧：特性卡片 */}
-              <motion.div
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="grid grid-cols-2 gap-4"
-              >
+              <div className="grid grid-cols-2 gap-4">
                 {features.map((f, index) => (
                   <motion.div
                     key={f.id}
@@ -304,12 +280,28 @@ export function LandingPage() {
                       transition: { duration: 0.2 }
                     }}
                     onClick={() => setSelectedFeature(f)}
-                    className={`group cursor-pointer relative overflow-hidden rounded-2xl border border-slate-700/50 bg-slate-800/50 backdrop-blur-sm p-6 transition-all duration-300 hover:border-${f.color}-500/50 hover:shadow-xl hover:shadow-${f.color}-500/10`}
+                    className="group cursor-pointer rounded-2xl p-6 transition-all duration-300"
+                    style={{
+                      backgroundColor: 'rgba(30, 41, 59, 0.6)',
+                      border: '1px solid rgba(51, 65, 85, 0.5)',
+                      backdropFilter: 'blur(8px)'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = f.bgColor + '60';
+                      e.currentTarget.style.boxShadow = `0 8px 30px ${f.bgColor}20`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(51, 65, 85, 0.5)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
                   >
-                    {/* 悬停时的渐变背景 */}
-                    <div className={`absolute inset-0 bg-gradient-to-br ${f.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
-                    
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${f.gradient} flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl transition-shadow duration-300`}>
+                    <div 
+                      className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-shadow duration-300"
+                      style={{
+                        background: `linear-gradient(135deg, ${f.bgColor}, ${f.bgColor}dd)`,
+                        boxShadow: `0 4px 15px ${f.bgColor}40`
+                      }}
+                    >
                       <div className="text-white">
                         {f.icon}
                       </div>
@@ -322,29 +314,38 @@ export function LandingPage() {
                     </div>
                   </motion.div>
                 ))}
-              </motion.div>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* 底部统计 - 玻璃拟态卡片 */}
-        <section className="px-6 py-12 border-t border-slate-700/30">
+        {/* 底部统计 */}
+        <section className="px-6 py-12" style={{ borderTop: '1px solid rgba(51, 65, 85, 0.3)' }}>
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {[
-                { value: '14+', label: '可视化模块', color: 'cyan' },
-                { value: '4', label: '数学领域', color: 'purple' },
-                { value: '100%', label: '免费使用', color: 'green' },
-                { value: '∞', label: '探索可能', color: 'orange' },
+                { value: '14+', label: '可视化模块', color: '#06b6d4' },
+                { value: '4', label: '数学领域', color: '#a855f7' },
+                { value: '100%', label: '免费使用', color: '#22c55e' },
+                { value: '∞', label: '探索可能', color: '#f97316' },
               ].map((stat, index) => (
                 <motion.div
                   key={stat.label}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 + index * 0.1 }}
-                  className="text-center p-6 rounded-2xl bg-slate-800/30 border border-slate-700/30 backdrop-blur-sm hover:bg-slate-800/50 transition-colors"
+                  className="text-center p-6 rounded-2xl transition-colors"
+                  style={{
+                    backgroundColor: 'rgba(30, 41, 59, 0.4)',
+                    border: '1px solid rgba(51, 65, 85, 0.3)'
+                  }}
                 >
-                  <div className={`text-3xl font-bold text-${stat.color}-400 mb-1`}>{stat.value}</div>
+                  <div 
+                    className="text-3xl font-bold mb-1"
+                    style={{ color: stat.color }}
+                  >
+                    {stat.value}
+                  </div>
                   <div className="text-slate-500 text-sm">{stat.label}</div>
                 </motion.div>
               ))}
@@ -353,7 +354,10 @@ export function LandingPage() {
         </section>
 
         {/* Footer */}
-        <footer className="px-6 py-6 border-t border-slate-700/30">
+        <footer 
+          className="px-6 py-6"
+          style={{ borderTop: '1px solid rgba(51, 65, 85, 0.3)' }}
+        >
           <div className="max-w-6xl mx-auto flex items-center justify-between">
             <p className="text-slate-500 text-sm">
               MathViz © 2026 - 数学可视化学习平台
@@ -382,52 +386,63 @@ export function LandingPage() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: '16px'
+              padding: '16px',
+              backgroundColor: 'rgba(15, 23, 42, 0.85)',
+              backdropFilter: 'blur(8px)'
+            }}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setSelectedFeature(null);
             }}
           >
-            {/* 背景遮罩 */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedFeature(null)}
-              style={{ 
-                position: 'absolute', 
-                inset: 0, 
-                backgroundColor: 'rgba(15, 23, 42, 0.85)',
-                backdropFilter: 'blur(8px)'
-              }}
-            />
-            
             {/* 详情卡片 */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              style={{ 
-                position: 'relative',
-                width: '100%',
-                maxWidth: '512px',
-                zIndex: 1
+              className="relative w-full max-w-lg rounded-2xl overflow-hidden"
+              style={{
+                backgroundColor: 'rgba(30, 41, 59, 0.95)',
+                border: '1px solid rgba(51, 65, 85, 0.5)',
+                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
               }}
-              className="bg-slate-800/90 backdrop-blur-xl rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden"
             >
               {/* 头部渐变背景 */}
-              <div className={`bg-gradient-to-r ${feature.gradient} p-6 relative overflow-hidden`}>
+              <div 
+                className="p-6 relative overflow-hidden"
+                style={{
+                  background: `linear-gradient(135deg, ${feature.bgColor}30, ${feature.bgColor}10)`
+                }}
+              >
                 {/* 装饰圆 */}
-                <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
-                <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-white/10 rounded-full blur-xl" />
+                <div 
+                  className="absolute rounded-full"
+                  style={{
+                    width: '150px',
+                    height: '150px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    filter: 'blur(40px)',
+                    top: '-50px',
+                    right: '-50px'
+                  }}
+                />
                 
                 <button
                   onClick={() => setSelectedFeature(null)}
-                  className="absolute top-4 right-4 p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors z-10"
+                  className="absolute top-4 right-4 p-2 text-white/70 hover:text-white rounded-lg transition-colors z-10"
+                  style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)' }}
                 >
                   <X className="w-5 h-5" />
                 </button>
 
                 <div className="flex items-center gap-4 relative z-10">
-                  <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
+                  <div 
+                    className="w-14 h-14 rounded-xl flex items-center justify-center"
+                    style={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                      backdropFilter: 'blur(8px)'
+                    }}
+                  >
                     <div className="text-white">
                       {feature.icon}
                     </div>
@@ -449,23 +464,21 @@ export function LandingPage() {
                 {/* 功能亮点 */}
                 <div className="space-y-3">
                   <h4 className="text-white font-semibold flex items-center gap-2">
-                    <Sparkles className={`w-4 h-4 text-${feature.color}-400`} />
+                    <Sparkles style={{ color: feature.bgColor }} />
                     功能亮点
                   </h4>
                   <div className="space-y-2">
                     {feature.highlights.map((highlight, index) => (
-                      <motion.div
+                      <div
                         key={index}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.1 + index * 0.1 }}
-                        className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 transition-colors"
+                        className="flex items-center gap-3 p-3 rounded-lg"
+                        style={{ backgroundColor: 'rgba(51, 65, 85, 0.3)' }}
                       >
-                        <div className={`text-${feature.color}-400`}>
+                        <div style={{ color: feature.bgColor }}>
                           {highlight.icon}
                         </div>
                         <span className="text-slate-300 text-sm">{highlight.text}</span>
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -475,35 +488,41 @@ export function LandingPage() {
                   <h4 className="text-white font-semibold mb-3">包含主题</h4>
                   <div className="flex flex-wrap gap-2">
                     {feature.topics.map((topic, index) => (
-                      <motion.span
+                      <span
                         key={index}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.2 + index * 0.05 }}
-                        className={`px-3 py-1 rounded-full text-sm bg-${feature.color}-500/10 text-${feature.color}-400 border border-${feature.color}-500/20 hover:bg-${feature.color}-500/20 transition-colors cursor-default`}
+                        className="px-3 py-1 rounded-full text-sm"
+                        style={{
+                          backgroundColor: `${feature.bgColor}20`,
+                          color: feature.bgColor,
+                          border: `1px solid ${feature.bgColor}40`
+                        }}
                       >
                         {topic}
-                      </motion.span>
+                      </span>
                     ))}
                   </div>
                 </div>
 
                 {/* 底部提示 */}
                 {!isLoggedIn && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="flex items-center gap-3 p-4 bg-slate-700/30 rounded-xl border border-slate-600/30"
+                  <div 
+                    className="flex items-center gap-3 p-4 rounded-xl"
+                    style={{
+                      backgroundColor: 'rgba(51, 65, 85, 0.3)',
+                      border: '1px solid rgba(71, 85, 105, 0.5)'
+                    }}
                   >
-                    <div className="w-10 h-10 bg-slate-600 rounded-lg flex items-center justify-center">
+                    <div 
+                      className="w-10 h-10 rounded-lg flex items-center justify-center"
+                      style={{ backgroundColor: 'rgba(71, 85, 105, 0.5)' }}
+                    >
                       <Lock className="w-5 h-5 text-slate-400" />
                     </div>
                     <div className="flex-1">
                       <div className="text-white font-medium">登录后解锁完整功能</div>
                       <div className="text-slate-400 text-sm">请使用顶部导航栏的登录按钮</div>
                     </div>
-                  </motion.div>
+                  </div>
                 )}
               </div>
             </motion.div>
