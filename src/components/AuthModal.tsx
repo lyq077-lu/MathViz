@@ -1,8 +1,8 @@
 import { useAuth } from '../contexts/AuthContext';
 import { GoogleLogin, googleLogout } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
-import { LogOut, Lock, Sparkles } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { LogOut, User, ChevronDown } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
 
 interface GoogleJwtPayload {
   sub: string;
@@ -11,106 +11,39 @@ interface GoogleJwtPayload {
   picture?: string;
 }
 
-export function AuthModal() {
-  const { setUser, isLoggedIn } = useAuth();
-
-  const handleSuccess = (credentialResponse: { credential?: string }) => {
-    if (credentialResponse.credential) {
-      const decoded = jwtDecode<GoogleJwtPayload>(credentialResponse.credential);
-      const userData = {
-        id: decoded.sub,
-        email: decoded.email,
-        name: decoded.name,
-        picture: decoded.picture,
-      };
-      setUser(userData);
-    }
-  };
-
-  const handleError = () => {
-    console.error('Google 登录失败');
-  };
-
-  // 已登录时不显示
-  if (isLoggedIn) return null;
-
-  return (
-    <div 
-      className="fixed inset-0 flex items-center justify-center"
-      style={{ 
-        zIndex: 99999,
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0
-      }}
-    >
-      {/* 背景遮罩 */}
-      <div 
-        className="absolute inset-0 bg-slate-900/90 backdrop-blur-sm"
-        style={{ position: 'absolute', inset: 0 }}
-      />
-      
-      {/* 登录弹窗 */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3 }}
-        className="relative w-full max-w-md mx-4"
-        style={{ position: 'relative', zIndex: 1 }}
-      >
-        <div className="bg-slate-800 border border-slate-700 rounded-2xl p-8 shadow-2xl">
-          {/* 图标 */}
-          <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center">
-              <Lock className="w-8 h-8 text-white" />
-            </div>
-          </div>
-          
-          {/* 标题 */}
-          <h2 className="text-2xl font-bold text-white text-center mb-2">
-            欢迎访问 MathViz
-          </h2>
-          <p className="text-slate-400 text-center mb-8">
-            请使用 Google 账号登录以继续使用
-          </p>
-          
-          {/* 登录按钮 */}
-          <div className="flex justify-center">
-            <GoogleLogin
-              onSuccess={handleSuccess}
-              onError={handleError}
-              useOneTap={false}
-              theme="filled_black"
-              size="large"
-              width="250"
-              text="signin_with"
-              shape="rectangular"
-            />
-          </div>
-          
-          {/* 特性说明 */}
-          <div className="mt-8 pt-6 border-t border-slate-700">
-            <div className="flex items-center justify-center gap-2 text-slate-500 text-sm">
-              <Sparkles className="w-4 h-4 text-cyan-400" />
-              <span>可视化数学学习平台</span>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-    </div>
-  );
+interface UserProfileProps {
+  onPersonalCenter?: () => void;
 }
 
-export function UserProfile() {
+export function UserProfile({ onPersonalCenter }: UserProfileProps) {
   const { user, setUser, isLoggedIn } = useAuth();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // 点击外部关闭下拉菜单
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleLogout = () => {
     googleLogout();
     setUser(null);
+    setIsDropdownOpen(false);
   };
 
+  const handlePersonalCenter = () => {
+    setIsDropdownOpen(false);
+    onPersonalCenter?.();
+  };
+
+  // 未登录状态
   if (!isLoggedIn || !user) {
     return (
       <div className="text-center py-2">
@@ -140,9 +73,14 @@ export function UserProfile() {
     );
   }
 
+  // 已登录状态 - 带下拉菜单
   return (
-    <div className="bg-slate-800/50 rounded-lg border border-slate-700 p-3">
-      <div className="flex items-center gap-3">
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+        className="w-full flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg border border-slate-700 hover:border-slate-600 transition-colors"
+      >
+        {/* 头像 */}
         {user.picture ? (
           <img
             src={user.picture}
@@ -154,27 +92,44 @@ export function UserProfile() {
             {user.name.charAt(0).toUpperCase()}
           </div>
         )}
-        <div className="flex-1 min-w-0 overflow-hidden">
+        
+        {/* 用户信息 */}
+        <div className="flex-1 min-w-0 overflow-hidden text-left">
           <p className="text-sm text-white truncate">{user.name}</p>
           <p className="text-xs text-slate-400 truncate">{user.email}</p>
         </div>
-        <button
-          onClick={handleLogout}
-          className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors shrink-0"
-          title="退出登录"
-        >
-          <LogOut className="w-4 h-4" />
-        </button>
-      </div>
-      <div className="mt-3 pt-3 border-t border-slate-700/50 flex justify-center">
-        <button
-          onClick={handleLogout}
-          className="w-full py-2 px-3 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-sm rounded-lg transition-colors flex items-center justify-center gap-2"
-        >
-          <LogOut className="w-4 h-4" />
-          <span>退出登录</span>
-        </button>
-      </div>
+
+        {/* 下拉箭头 */}
+        <ChevronDown 
+          className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} 
+        />
+      </button>
+
+      {/* 下拉菜单 */}
+      {isDropdownOpen && (
+        <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-50 overflow-hidden">
+          {/* 个人中心选项 */}
+          <button
+            onClick={handlePersonalCenter}
+            className="w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-700/50 hover:text-white transition-colors text-left"
+          >
+            <User className="w-4 h-4" />
+            <span className="text-sm">个人中心</span>
+          </button>
+
+          {/* 分隔线 */}
+          <div className="border-t border-slate-700" />
+
+          {/* 退出登录选项 */}
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition-colors text-left"
+          >
+            <LogOut className="w-4 h-4" />
+            <span className="text-sm">退出登录</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

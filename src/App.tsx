@@ -10,7 +10,9 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 // bg-green-500/5 bg-green-500/20 border-green-500/20 border-green-500/50 text-green-300/80 text-green-400
 import { AnimationProvider, useAnimation, type TrigonometryState, type LinearState, type QuadraticState, type PythagoreanState, type CircleState } from './contexts/AnimationContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { AuthModal, UserProfile } from './components/AuthModal';
+import { UserProfile } from './components/AuthModal';
+import { LandingPage } from './components/LandingPage';
+import { PersonalCenter } from './components/PersonalCenter';
 import UnitCircle from './modules/functions/trigonometry/UnitCircle';
 import LinearFunction from './modules/functions/linear/LinearFunction';
 import QuadraticFunction from './modules/functions/quadratic/QuadraticFunction';
@@ -327,7 +329,11 @@ function PlaybackControlInline() {
 }
 
 // ============ 右侧参数设置栏 ============
-function RightPanel() {
+interface RightPanelProps {
+  onPersonalCenter?: () => void;
+}
+
+function RightPanel({ onPersonalCenter }: RightPanelProps) {
   const { activeTopic, isPlaying, setIsPlaying, trigState, linearState, quadraticState, pythagoreanState, circleState } = useAnimation();
 
   const renderControls = () => {
@@ -382,7 +388,7 @@ function RightPanel() {
     >
       {/* 用户登录区域 - 置顶 */}
       <div className="p-4 border-b border-slate-700 shrink-0">
-        <UserProfile />
+        <UserProfile onPersonalCenter={onPersonalCenter} />
       </div>
       {/* 播放控制 */}
       <div className="p-4 border-b border-slate-700 shrink-0">
@@ -900,19 +906,38 @@ function BayesianControls() {
   );
 }
 
-// ============ 主应用 ============
-function AppContent() {
-  const { isLoggedIn } = useAuth();
-
+// ============ 主应用（登录后） ============
+function MainApp({ onPersonalCenter }: { onPersonalCenter: () => void }) {
   return (
     <>
       <LeftPanel />
-      <RightPanel />
+      <RightPanel onPersonalCenter={onPersonalCenter} />
       <MainContent />
-      {/* 未登录时显示登录弹窗 */}
-      {!isLoggedIn && <AuthModal />}
     </>
   );
+}
+
+// ============ 应用路由 ============
+function AppContent() {
+  const { isLoggedIn } = useAuth();
+  const [currentView, setCurrentView] = useState<'landing' | 'main' | 'personal'>('landing');
+
+  // 根据登录状态和当前视图显示不同页面
+  // 1. 未登录 -> 显示首页 LandingPage
+  // 2. 已登录 + main -> 显示主应用 MainApp
+  // 3. 已登录 + personal -> 显示个人中心 PersonalCenter
+
+  if (!isLoggedIn) {
+    return <LandingPage />;
+  }
+
+  // 切换到个人中心
+  if (currentView === 'personal') {
+    return <PersonalCenter onBack={() => setCurrentView('main')} />;
+  }
+
+  // 显示主应用
+  return <MainApp onPersonalCenter={() => setCurrentView('personal')} />;
 }
 
 // Google OAuth 客户端 ID
