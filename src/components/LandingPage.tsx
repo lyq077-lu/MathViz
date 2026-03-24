@@ -325,28 +325,38 @@ export function LandingPage() {
                   登录后即可开始学习之旅
                 </p>
                 
-                {/* Google 登录按钮 - 居中 */}
-                <div 
-                  style={{ 
-                    display: 'flex', 
-                    justifyContent: 'center',
-                    minHeight: '44px',
-                    position: 'relative',
-                    zIndex: 10
-                  }}
-                >
-                  <div style={{ transform: 'scale(1.1)' }}>
-                    <GoogleLogin
-                      onSuccess={handleSuccess}
-                      onError={handleError}
-                      useOneTap={false}
-                      theme="filled_black"
-                      size="large"
-                      width="250"
-                      text="signin_with"
-                      shape="rectangular"
-                    />
-                  </div>
+                {/* 提示用户点击顶部登录 */}
+                <div style={{ textAlign: 'center' }}>
+                  <p style={{ color: '#94a3b8', marginBottom: '16px' }}>
+                    请点击下方按钮登录
+                  </p>
+                  <button
+                    onClick={() => {
+                      setShowLogin(false);
+                      // 滚动到顶部
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '12px 32px',
+                      background: 'linear-gradient(135deg, #06b6d4, #2563eb)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontSize: '16px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 14px rgba(6, 182, 212, 0.4)'
+                    }}
+                    className="hover:opacity-90 transition-opacity"
+                  >
+                    <svg style={{ width: '20px', height: '20px' }} viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2c5.514 0 10 4.486 10 10s-4.486 10-10 10S2 17.514 2 12 6.486 2 12 2zm-1 5v4H7v2h4v4h2v-4h4v-2h-4V7h-2z"/>
+                    </svg>
+                    立即登录
+                  </button>
                 </div>
                 
                 {/* 提示 */}
