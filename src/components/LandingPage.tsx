@@ -1,7 +1,10 @@
 import { useAuth } from '../contexts/AuthContext';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
-import { Calculator, Shapes, FunctionSquare, Triangle, Sparkles, ChevronRight, Lock } from 'lucide-react';
+import { 
+  Calculator, Shapes, FunctionSquare, Triangle, Sparkles, ChevronRight, 
+  X, Play, Eye, BookOpen, Lock
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 
@@ -18,35 +21,63 @@ const features = [
     id: 'trigonometry',
     icon: <Shapes className="w-6 h-6" />,
     title: '三角函数',
-    description: '单位圆与正弦波可视化',
+    shortDesc: '单位圆与正弦波可视化',
+    description: '通过动态单位圆，直观理解三角函数的本质。观察角度变化时正弦、余弦值的动态生成过程，掌握三角函数的周期性特征。',
     color: 'cyan',
+    highlights: [
+      { icon: <Play className="w-4 h-4" />, text: '动态演示正弦、余弦生成过程' },
+      { icon: <Eye className="w-4 h-4" />, text: '可视化角度与函数值关系' },
+      { icon: <BookOpen className="w-4 h-4" />, text: '交互式调节角度参数' },
+    ],
+    topics: ['单位圆', '正弦函数', '余弦函数', '正切函数', '周期性'],
   },
   {
     id: 'algebra',
     icon: <FunctionSquare className="w-6 h-6" />,
     title: '代数与函数',
-    description: '线性、二次、复数运算',
+    shortDesc: '线性、二次、复数运算',
+    description: '探索各类函数图像，理解代数之美。从线性函数到二次函数，从实数到复数，全面掌握代数核心概念。',
     color: 'orange',
+    highlights: [
+      { icon: <Play className="w-4 h-4" />, text: '线性函数 y = kx + b 动态展示' },
+      { icon: <Eye className="w-4 h-4" />, text: '二次函数顶点与对称轴可视化' },
+      { icon: <BookOpen className="w-4 h-4" />, text: '复数在复平面上的运算' },
+    ],
+    topics: ['线性函数', '二次函数', '复数', '复平面', '函数变换'],
   },
   {
     id: 'geometry',
     icon: <Triangle className="w-6 h-6" />,
     title: '几何探索',
-    description: '勾股定理、圆方程、分形',
+    shortDesc: '勾股定理、圆方程、分形',
+    description: '用动画证明几何定理，探索分形的自相似之美。从经典定理到现代分形几何，领略数学的几何魅力。',
     color: 'purple',
+    highlights: [
+      { icon: <Play className="w-4 h-4" />, text: '勾股定理拼图动画证明' },
+      { icon: <Eye className="w-4 h-4" />, text: '圆的标准方程可视化' },
+      { icon: <BookOpen className="w-4 h-4" />, text: '谢尔宾斯基三角形分形' },
+    ],
+    topics: ['勾股定理', '圆方程', '分形', '自相似性', '几何证明'],
   },
   {
     id: 'probability',
     icon: <Sparkles className="w-6 h-6" />,
     title: '概率统计',
-    description: '大数定律、正态分布、贝叶斯',
+    shortDesc: '大数定律、正态分布、贝叶斯',
+    description: '通过模拟实验理解概率统计的核心概念。从掷硬币到贝叶斯定理，用数据揭示随机现象背后的规律。',
     color: 'green',
+    highlights: [
+      { icon: <Play className="w-4 h-4" />, text: '掷硬币模拟大数定律' },
+      { icon: <Eye className="w-4 h-4" />, text: '正态分布钟形曲线生成' },
+      { icon: <BookOpen className="w-4 h-4" />, text: '贝叶斯定理概率更新' },
+    ],
+    topics: ['大数定律', '正态分布', '贝叶斯定理', '条件概率', '统计推断'],
   },
 ];
 
 export function LandingPage() {
-  const { setUser } = useAuth();
-  const [showLogin, setShowLogin] = useState(false);
+  const { setUser, isLoggedIn } = useAuth();
+  const [selectedFeature, setSelectedFeature] = useState<typeof features[0] | null>(null);
 
   const handleSuccess = (credentialResponse: { credential?: string }) => {
     if (credentialResponse.credential) {
@@ -58,14 +89,14 @@ export function LandingPage() {
         picture: decoded.picture,
       };
       setUser(userData);
-      // 登录成功后关闭弹窗
-      setShowLogin(false);
     }
   };
 
   const handleError = () => {
     console.error('Google 登录失败');
   };
+
+  const feature = selectedFeature;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col">
@@ -85,15 +116,17 @@ export function LandingPage() {
           </div>
           
           {/* 顶部登录按钮 */}
-          <GoogleLogin
-            onSuccess={handleSuccess}
-            onError={handleError}
-            useOneTap={false}
-            theme="filled_black"
-            size="medium"
-            text="signin_with"
-            shape="rectangular"
-          />
+          {!isLoggedIn && (
+            <GoogleLogin
+              onSuccess={handleSuccess}
+              onError={handleError}
+              useOneTap={false}
+              theme="filled_black"
+              size="medium"
+              text="signin_with"
+              shape="rectangular"
+            />
+          )}
         </div>
       </nav>
 
@@ -151,22 +184,22 @@ export function LandingPage() {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="grid grid-cols-2 gap-4"
               >
-                {features.map((feature, index) => (
+                {features.map((f, index) => (
                   <motion.div
-                    key={feature.title}
+                    key={f.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
-                    onClick={() => setShowLogin(true)}
-                    className={`p-6 rounded-2xl border border-slate-700/50 bg-slate-800/50 backdrop-blur-sm hover:border-${feature.color}-500/30 hover:bg-slate-800/80 transition-all group cursor-pointer`}
+                    onClick={() => setSelectedFeature(f)}
+                    className={`p-6 rounded-2xl border border-slate-700/50 bg-slate-800/50 backdrop-blur-sm hover:border-${f.color}-500/30 hover:bg-slate-800/80 transition-all group cursor-pointer`}
                   >
-                    <div className={`w-12 h-12 rounded-xl bg-${feature.color}-500/10 flex items-center justify-center mb-4 group-hover:bg-${feature.color}-500/20 transition-colors`}>
-                      <div className={`text-${feature.color}-400`}>
-                        {feature.icon}
+                    <div className={`w-12 h-12 rounded-xl bg-${f.color}-500/10 flex items-center justify-center mb-4 group-hover:bg-${f.color}-500/20 transition-colors`}>
+                      <div className={`text-${f.color}-400`}>
+                        {f.icon}
                       </div>
                     </div>
-                    <h3 className="text-white font-semibold mb-2">{feature.title}</h3>
-                    <p className="text-slate-400 text-sm">{feature.description}</p>
+                    <h3 className="text-white font-semibold mb-2">{f.title}</h3>
+                    <p className="text-slate-400 text-sm">{f.shortDesc}</p>
                     <div className="flex items-center gap-1 mt-4 text-slate-500 text-sm group-hover:text-slate-300 transition-colors">
                       <span>了解详情</span>
                       <ChevronRight className="w-4 h-4" />
@@ -221,158 +254,104 @@ export function LandingPage() {
         </footer>
       </main>
 
-      {/* 居中登录弹窗 */}
+      {/* 详情弹窗 */}
       <AnimatePresence>
-        {showLogin && (
-          <div 
-            className="fixed inset-0 z-[9999] flex items-center justify-center"
-            style={{ 
-              position: 'fixed', 
-              top: 0, 
-              left: 0, 
-              right: 0, 
-              bottom: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '16px'
-            }}
-          >
+        {feature && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
             {/* 背景遮罩 */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setShowLogin(false)}
-              style={{ 
-                position: 'absolute', 
-                inset: 0, 
-                backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                backdropFilter: 'blur(4px)'
-              }}
+              onClick={() => setSelectedFeature(null)}
+              className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
             />
             
-            {/* 居中登录框 */}
+            {/* 详情卡片 */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              style={{ 
-                position: 'relative', 
-                width: '100%', 
-                maxWidth: '400px',
-                zIndex: 1
-              }}
+              className="relative w-full max-w-lg bg-slate-800 rounded-2xl border border-slate-700 shadow-2xl overflow-hidden"
             >
-              <div 
-                className="bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl"
-                style={{ padding: '32px', backgroundColor: '#1e293b', border: '1px solid #334155' }}
-              >
-                {/* 关闭按钮 */}
+              {/* 头部 */}
+              <div className={`bg-${feature.color}-500/10 border-b border-${feature.color}-500/20 p-6`}>
                 <button
-                  onClick={() => setShowLogin(false)}
-                  style={{ 
-                    position: 'absolute', 
-                    top: '16px', 
-                    right: '16px',
-                    padding: '8px',
-                    color: '#94a3b8',
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: 'pointer'
-                  }}
-                  className="hover:text-white hover:bg-slate-700"
+                  onClick={() => setSelectedFeature(null)}
+                  className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
                 >
-                  <svg style={{ width: '20px', height: '20px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  <X className="w-5 h-5" />
                 </button>
 
-                {/* 图标 */}
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
-                  <div 
-                    style={{ 
-                      width: '64px', 
-                      height: '64px',
-                      background: 'linear-gradient(135deg, #06b6d4, #2563eb)',
-                      borderRadius: '16px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                  >
-                    <Lock style={{ width: '32px', height: '32px', color: 'white' }} />
+                <div className="flex items-center gap-4">
+                  <div className={`w-14 h-14 rounded-xl bg-${feature.color}-500/20 flex items-center justify-center`}>
+                    <div className={`text-${feature.color}-400`}>
+                      {feature.icon}
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-white">{feature.title}</h3>
+                    <p className="text-slate-400">{feature.shortDesc}</p>
                   </div>
                 </div>
-                
-                {/* 标题 */}
-                <h2 style={{ 
-                  fontSize: '24px', 
-                  fontWeight: 'bold', 
-                  color: 'white', 
-                  textAlign: 'center',
-                  marginBottom: '8px'
-                }}>
-                  欢迎访问 MathViz
-                </h2>
-                <p style={{ 
-                  color: '#94a3b8', 
-                  textAlign: 'center', 
-                  marginBottom: '32px'
-                }}>
-                  登录后即可开始学习之旅
+              </div>
+
+              {/* 内容 */}
+              <div className="p-6 space-y-6">
+                {/* 描述 */}
+                <p className="text-slate-300 leading-relaxed">
+                  {feature.description}
                 </p>
-                
-                {/* 提示用户点击顶部登录 */}
-                <div style={{ textAlign: 'center' }}>
-                  <p style={{ color: '#94a3b8', marginBottom: '16px' }}>
-                    请点击下方按钮登录
-                  </p>
-                  <button
-                    onClick={() => {
-                      setShowLogin(false);
-                      // 滚动到顶部
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      padding: '12px 32px',
-                      background: 'linear-gradient(135deg, #06b6d4, #2563eb)',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '8px',
-                      fontSize: '16px',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      boxShadow: '0 4px 14px rgba(6, 182, 212, 0.4)'
-                    }}
-                    className="hover:opacity-90 transition-opacity"
-                  >
-                    <svg style={{ width: '20px', height: '20px' }} viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2c5.514 0 10 4.486 10 10s-4.486 10-10 10S2 17.514 2 12 6.486 2 12 2zm-1 5v4H7v2h4v4h2v-4h4v-2h-4V7h-2z"/>
-                    </svg>
-                    立即登录
-                  </button>
+
+                {/* 功能亮点 */}
+                <div className="space-y-3">
+                  <h4 className="text-white font-semibold flex items-center gap-2">
+                    <Sparkles className={`w-4 h-4 text-${feature.color}-400`} />
+                    功能亮点
+                  </h4>
+                  <div className="space-y-2">
+                    {feature.highlights.map((highlight, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-lg"
+                      >
+                        <div className={`text-${feature.color}-400`}>
+                          {highlight.icon}
+                        </div>
+                        <span className="text-slate-300 text-sm">{highlight.text}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                
-                {/* 提示 */}
-                <div style={{ 
-                  marginTop: '24px', 
-                  paddingTop: '24px', 
-                  borderTop: '1px solid #334155'
-                }}>
-                  <p style={{ 
-                    fontSize: '12px', 
-                    color: '#64748b', 
-                    textAlign: 'center'
-                  }}>
-                    使用 Google 账号快速登录，无需额外注册
-                  </p>
+
+                {/* 包含主题 */}
+                <div>
+                  <h4 className="text-white font-semibold mb-3">包含主题</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {feature.topics.map((topic, index) => (
+                      <span
+                        key={index}
+                        className={`px-3 py-1 rounded-full text-sm bg-${feature.color}-500/10 text-${feature.color}-400 border border-${feature.color}-500/20`}
+                      >
+                        {topic}
+                      </span>
+                    ))}
+                  </div>
                 </div>
+
+                {/* 底部提示 */}
+                {!isLoggedIn && (
+                  <div className="flex items-center gap-3 p-4 bg-slate-700/30 rounded-xl">
+                    <div className="w-10 h-10 bg-slate-600 rounded-lg flex items-center justify-center">
+                      <Lock className="w-5 h-5 text-slate-400" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-white font-medium">登录后解锁完整功能</div>
+                      <div className="text-slate-400 text-sm">请使用顶部导航栏的登录按钮</div>
+                    </div>
+                  </div>
+                )}
               </div>
             </motion.div>
           </div>
