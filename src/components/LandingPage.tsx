@@ -48,26 +48,32 @@ export function LandingPage() {
   const { setUser } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
 
-  // 使用Google登录hook
+  // 使用Google登录hook - 配置flow为implicit避免需要后端
   const googleLogin = useGoogleLogin({
-    onSuccess: (tokenResponse) => {
-      // 使用access token获取用户信息
-      fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-        headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
-      })
-        .then(res => res.json())
-        .then((userInfo: { sub: string; email: string; name: string; picture?: string }) => {
-          setUser({
-            id: userInfo.sub,
-            email: userInfo.email,
-            name: userInfo.name,
-            picture: userInfo.picture,
-          });
-        })
-        .catch(err => console.error('获取用户信息失败', err));
+    flow: 'implicit',
+    onSuccess: async (tokenResponse) => {
+      console.log('Google登录成功', tokenResponse);
+      try {
+        // 使用access token获取用户信息
+        const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+        });
+        const userInfo = await res.json();
+        console.log('用户信息', userInfo);
+        setUser({
+          id: userInfo.sub,
+          email: userInfo.email,
+          name: userInfo.name,
+          picture: userInfo.picture,
+        });
+        // 登录成功后关闭弹窗
+        setShowLogin(false);
+      } catch (err) {
+        console.error('获取用户信息失败', err);
+      }
     },
-    onError: () => {
-      console.error('Google 登录失败');
+    onError: (error) => {
+      console.error('Google 登录失败', error);
     },
   });
 
@@ -245,20 +251,28 @@ export function LandingPage() {
       {/* 居中登录弹窗 */}
       <AnimatePresence>
         {showLogin && (
-          <div 
-            className="fixed inset-0 z-[9999] flex items-center justify-center"
+          <motion.div 
+            className="fixed inset-0 z-[9999]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             style={{ 
               position: 'fixed', 
               top: 0, 
               left: 0, 
               right: 0, 
-              bottom: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '16px'
+              bottom: 0
             }}
           >
+            {/* 居中容器 */}
+            <div 
+              className="absolute inset-0 flex items-center justify-center p-4"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
             {/* 背景遮罩 */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -283,7 +297,8 @@ export function LandingPage() {
                 position: 'relative', 
                 width: '100%', 
                 maxWidth: '400px',
-                zIndex: 1
+                zIndex: 1,
+                pointerEvents: 'auto'
               }}
             >
               <div 
@@ -355,7 +370,12 @@ export function LandingPage() {
                   }}
                 >
                   <button
-                    onClick={() => googleLogin()}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log('点击Google登录按钮');
+                      googleLogin();
+                    }}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -370,7 +390,8 @@ export function LandingPage() {
                       fontWeight: 500,
                       cursor: 'pointer',
                       width: '280px',
-                      height: '44px'
+                      height: '44px',
+                      pointerEvents: 'auto'
                     }}
                     className="hover:bg-slate-800 transition-colors"
                   >
@@ -398,11 +419,26 @@ export function LandingPage() {
                     使用 Google 账号快速登录，无需额外注册
                   </p>
                 </div>
+                {/* 提示 */}
+                <div style={{ 
+                  marginTop: '24px', 
+                  paddingTop: '24px', 
+                  borderTop: '1px solid #334155'
+                }}>
+                  <p style={{ 
+                    fontSize: '12px', 
+                    color: '#64748b', 
+                    textAlign: 'center'
+                  }}>
+                    使用 Google 账号快速登录，无需额外注册
+                  </p>
+                </div>
               </div>
             </motion.div>
           </div>
-        )}
-      </AnimatePresence>
+        </motion.div>
+      )}
+    </AnimatePresence>
     </div>
   );
 }
