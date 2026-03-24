@@ -1,8 +1,9 @@
 import { useAuth } from '../contexts/AuthContext';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
-import { Calculator, Shapes, FunctionSquare, Triangle, Sparkles, ChevronRight } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Calculator, Shapes, FunctionSquare, Triangle, Sparkles, ChevronRight, X, Lock, Play, Eye, BookOpen } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
 
 interface GoogleJwtPayload {
   sub: string;
@@ -14,33 +15,78 @@ interface GoogleJwtPayload {
 // 特性展示数据
 const features = [
   {
+    id: 'trigonometry',
     icon: <Shapes className="w-6 h-6" />,
     title: '三角函数',
     description: '单位圆与正弦波可视化',
     color: 'cyan',
+    preview: '免费预览',
+    details: {
+      intro: '通过动态单位圆，直观理解三角函数的本质。',
+      highlights: [
+        { icon: <Play className="w-4 h-4" />, text: '动态演示正弦、余弦生成过程' },
+        { icon: <Eye className="w-4 h-4" />, text: '可视化角度与函数值关系' },
+        { icon: <BookOpen className="w-4 h-4" />, text: '交互式调节角度参数' },
+      ],
+      previewAvailable: true,
+    }
   },
   {
+    id: 'algebra',
     icon: <FunctionSquare className="w-6 h-6" />,
     title: '代数与函数',
     description: '线性、二次、复数运算',
     color: 'orange',
+    preview: '免费预览',
+    details: {
+      intro: '探索各类函数图像，理解代数之美。',
+      highlights: [
+        { icon: <Play className="w-4 h-4" />, text: '线性函数 y = kx + b 动态展示' },
+        { icon: <Eye className="w-4 h-4" />, text: '二次函数顶点与对称轴可视化' },
+        { icon: <BookOpen className="w-4 h-4" />, text: '复数在复平面上的运算' },
+      ],
+      previewAvailable: true,
+    }
   },
   {
+    id: 'geometry',
     icon: <Triangle className="w-6 h-6" />,
     title: '几何探索',
     description: '勾股定理、圆方程、分形',
     color: 'purple',
+    preview: '登录解锁',
+    details: {
+      intro: '用动画证明几何定理，探索分形的自相似之美。',
+      highlights: [
+        { icon: <Play className="w-4 h-4" />, text: '勾股定理拼图动画证明' },
+        { icon: <Eye className="w-4 h-4" />, text: '圆的标准方程可视化' },
+        { icon: <BookOpen className="w-4 h-4" />, text: '谢尔宾斯基三角形分形' },
+      ],
+      previewAvailable: false,
+    }
   },
   {
+    id: 'probability',
     icon: <Sparkles className="w-6 h-6" />,
     title: '概率统计',
     description: '大数定律、正态分布、贝叶斯',
     color: 'green',
+    preview: '登录解锁',
+    details: {
+      intro: '通过模拟实验理解概率统计的核心概念。',
+      highlights: [
+        { icon: <Play className="w-4 h-4" />, text: '掷硬币模拟大数定律' },
+        { icon: <Eye className="w-4 h-4" />, text: '正态分布钟形曲线生成' },
+        { icon: <BookOpen className="w-4 h-4" />, text: '贝叶斯定理概率更新' },
+      ],
+      previewAvailable: false,
+    }
   },
 ];
 
 export function LandingPage() {
   const { setUser } = useAuth();
+  const [selectedFeature, setSelectedFeature] = useState<typeof features[0] | null>(null);
 
   const handleSuccess = (credentialResponse: { credential?: string }) => {
     if (credentialResponse.credential) {
@@ -167,7 +213,8 @@ export function LandingPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
-                    className={`p-6 rounded-2xl border border-slate-700/50 bg-slate-800/50 backdrop-blur-sm hover:border-${feature.color}-500/30 transition-all group cursor-pointer`}
+                    onClick={() => setSelectedFeature(feature)}
+                    className={`p-6 rounded-2xl border border-slate-700/50 bg-slate-800/50 backdrop-blur-sm hover:border-${feature.color}-500/30 hover:bg-slate-800/80 transition-all group cursor-pointer`}
                   >
                     <div className={`w-12 h-12 rounded-xl bg-${feature.color}-500/10 flex items-center justify-center mb-4 group-hover:bg-${feature.color}-500/20 transition-colors`}>
                       <div className={`text-${feature.color}-400`}>
@@ -229,6 +276,139 @@ export function LandingPage() {
           </div>
         </footer>
       </main>
+
+      {/* 详情弹窗 */}
+      <AnimatePresence>
+        {selectedFeature && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* 背景遮罩 */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedFeature(null)}
+              className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
+            />
+            
+            {/* 弹窗内容 */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-lg bg-slate-800 rounded-2xl border border-slate-700 shadow-2xl overflow-hidden"
+            >
+              {/* 关闭按钮 */}
+              <button
+                onClick={() => setSelectedFeature(null)}
+                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors z-10"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* 弹窗头部 */}
+              <div className={`p-6 bg-${selectedFeature.color}-500/10 border-b border-${selectedFeature.color}-500/20`}>
+                <div className="flex items-center gap-4">
+                  <div className={`w-14 h-14 rounded-xl bg-${selectedFeature.color}-500/20 flex items-center justify-center`}>
+                    <div className={`text-${selectedFeature.color}-400`}>
+                      {selectedFeature.icon}
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-white">{selectedFeature.title}</h3>
+                    <p className="text-slate-400">{selectedFeature.description}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 弹窗内容 */}
+              <div className="p-6 space-y-6">
+                {/* 功能介绍 */}
+                <div>
+                  <p className="text-slate-300 leading-relaxed">
+                    {selectedFeature.details.intro}
+                  </p>
+                </div>
+
+                {/* 功能亮点 */}
+                <div className="space-y-3">
+                  <h4 className="text-white font-semibold flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-cyan-400" />
+                    功能亮点
+                  </h4>
+                  <div className="space-y-2">
+                    {selectedFeature.details.highlights.map((highlight, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-lg"
+                      >
+                        <div className={`text-${selectedFeature.color}-400`}>
+                          {highlight.icon}
+                        </div>
+                        <span className="text-slate-300 text-sm">{highlight.text}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 状态提示 */}
+                <div className={`p-4 rounded-xl border ${
+                  selectedFeature.details.previewAvailable
+                    ? 'bg-green-500/10 border-green-500/20'
+                    : 'bg-slate-700/30 border-slate-600'
+                }`}>
+                  <div className="flex items-center gap-3">
+                    {selectedFeature.details.previewAvailable ? (
+                      <>
+                        <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
+                          <Eye className="w-5 h-5 text-green-400" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-green-400 font-medium">免费预览可用</div>
+                          <div className="text-slate-400 text-sm">登录后可获得完整体验</div>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="w-10 h-10 bg-slate-600 rounded-lg flex items-center justify-center">
+                          <Lock className="w-5 h-5 text-slate-400" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-white font-medium">登录后解锁</div>
+                          <div className="text-slate-400 text-sm">此功能需要登录才能使用</div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* 登录按钮 */}
+                <div className="pt-2">
+                  <div className="text-center mb-4">
+                    <p className="text-slate-400 text-sm mb-3">
+                      {selectedFeature.details.previewAvailable 
+                        ? '登录后即可开始完整学习之旅'
+                        : '登录后立即解锁此功能'
+                      }
+                    </p>
+                  </div>
+                  <div className="flex justify-center">
+                    <GoogleLogin
+                      onSuccess={handleSuccess}
+                      onError={handleError}
+                      useOneTap={false}
+                      theme="filled_black"
+                      size="large"
+                      width="280"
+                      text="signin_with"
+                      shape="rectangular"
+                    />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
