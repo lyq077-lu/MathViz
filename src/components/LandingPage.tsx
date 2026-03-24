@@ -257,14 +257,29 @@ export function LandingPage() {
       {/* 详情弹窗 */}
       <AnimatePresence>
         {feature && (
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <div 
+            className="fixed inset-0 z-[9999]"
+            style={{ 
+              position: 'fixed',
+              top: 0, left: 0, right: 0, bottom: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '16px'
+            }}
+          >
             {/* 背景遮罩 */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedFeature(null)}
-              className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
+              style={{ 
+                position: 'absolute', 
+                inset: 0, 
+                backgroundColor: 'rgba(15, 23, 42, 0.8)',
+                backdropFilter: 'blur(4px)'
+              }}
             />
             
             {/* 详情卡片 */}
@@ -273,7 +288,13 @@ export function LandingPage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-lg bg-slate-800 rounded-2xl border border-slate-700 shadow-2xl overflow-hidden"
+              style={{ 
+                position: 'relative',
+                width: '100%',
+                maxWidth: '512px',
+                zIndex: 1
+              }}
+              className="bg-slate-800 rounded-2xl border border-slate-700 shadow-2xl overflow-hidden"
             >
               {/* 头部 */}
               <div className={`bg-${feature.color}-500/10 border-b border-${feature.color}-500/20 p-6`}>
