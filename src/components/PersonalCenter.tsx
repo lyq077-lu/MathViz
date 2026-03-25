@@ -1,27 +1,17 @@
 import { useAuth } from '../contexts/AuthContext';
 import { 
   Mail, Calendar, Clock, Crown, Coins, 
-  ChevronLeft, Flame, X
+  ChevronLeft
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { PricingPlans } from './PayPalButton';
 
 interface PersonalCenterProps {
   onBack: () => void;
 }
 
-// 会员计划数据
-const plans = [
-  { id: 'monthly', name: '月度会员', price: '¥19.9', unit: '/月', popular: false },
-  { id: 'yearly', name: '年度会员', price: '¥199', unit: '/年', popular: true },
-  { id: 'permanent', name: '永久会员', price: '¥499', unit: '一次性', popular: false },
-];
-
 export function PersonalCenter({ onBack }: PersonalCenterProps) {
   const { user } = useAuth();
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [paymentPlan, setPaymentPlan] = useState<typeof plans[0] | null>(null);
 
   // 模拟数据 - 后续对接真实数据
   const userStats = {
@@ -30,12 +20,6 @@ export function PersonalCenter({ onBack }: PersonalCenterProps) {
     memberType: '普通会员',
     memberExpiry: '2026-12-31',
     joinDate: '2026-03-24',
-  };
-
-  const handlePlanClick = (plan: typeof plans[0]) => {
-    setSelectedPlan(plan.id);
-    setPaymentPlan(plan);
-    setShowPaymentModal(true);
   };
 
   if (!user) return null;
@@ -247,47 +231,8 @@ export function PersonalCenter({ onBack }: PersonalCenterProps) {
                 </div>
               </div>
               
-              {/* 会员选项 */}
-              <div className="grid grid-cols-3 gap-3">
-                {plans.map((plan) => (
-                  <motion.div
-                    key={plan.id}
-                    onClick={() => handlePlanClick(plan)}
-                    className="rounded-xl p-3 text-center relative cursor-pointer transition-all duration-200"
-                    style={{
-                      backgroundColor: selectedPlan === plan.id ? 'rgba(51, 65, 85, 0.9)' : 'rgba(30, 41, 59, 0.6)',
-                      border: selectedPlan === plan.id ? '2px solid #a855f7' : '1px solid rgba(51, 65, 85, 0.5)',
-                    }}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onMouseEnter={(e) => {
-                      if (selectedPlan !== plan.id) {
-                        e.currentTarget.style.backgroundColor = 'rgba(51, 65, 85, 0.8)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (selectedPlan !== plan.id) {
-                        e.currentTarget.style.backgroundColor = 'rgba(30, 41, 59, 0.6)';
-                      }
-                    }}
-                  >
-                    {/* 推荐标签 - 左上角火焰图标 */}
-                    {plan.popular && (
-                      <div 
-                        className="absolute flex items-center gap-1"
-                        style={{ top: '4px', left: '4px' }}
-                      >
-                        <Flame className="w-4 h-4 text-red-500 fill-red-500" />
-                        <span className="text-xs font-bold text-red-500">HOT</span>
-                      </div>
-                    )}
-                    
-                    <div className="font-semibold mt-2" style={{ color: '#22d3ee' }}>{plan.name}</div>
-                    <div className="text-white text-lg font-bold mt-1">{plan.price}</div>
-                    <div className="text-slate-500 text-xs">{plan.unit}</div>
-                  </motion.div>
-                ))}
-              </div>
+              {/* PayPal 支付组件 */}
+              <PricingPlans />
             </motion.div>
 
             {/* 学习记录 */}
@@ -406,101 +351,6 @@ export function PersonalCenter({ onBack }: PersonalCenterProps) {
           </div>
         </div>
       </main>
-
-      {/* 支付弹窗 */}
-      <AnimatePresence>
-        {showPaymentModal && paymentPlan && (
-          <div 
-            className="fixed inset-0 z-[100]"
-            style={{ 
-              position: 'fixed',
-              top: 0, left: 0, right: 0, bottom: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '16px',
-              backgroundColor: 'rgba(15, 23, 42, 0.9)',
-              backdropFilter: 'blur(8px)'
-            }}
-            onClick={(e) => {
-              if (e.target === e.currentTarget) setShowPaymentModal(false);
-            }}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-md rounded-2xl overflow-hidden"
-              style={{
-                backgroundColor: 'rgba(30, 41, 59, 0.95)',
-                border: '1px solid rgba(51, 65, 85, 0.5)',
-                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
-              }}
-            >
-              {/* 头部 */}
-              <div 
-                className="p-6 relative overflow-hidden"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(236, 72, 153, 0.3))'
-                }}
-              >
-                <button
-                  onClick={() => setShowPaymentModal(false)}
-                  className="absolute top-4 right-4 p-2 text-white/70 hover:text-white rounded-lg transition-colors"
-                  style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)' }}
-                >
-                  <X className="w-5 h-5" />
-                </button>
-
-                <div className="text-center relative z-10">
-                  <Crown className="w-12 h-12 text-white mx-auto mb-2" />
-                  <h3 className="text-2xl font-bold text-white">确认订单</h3>
-                  <p className="text-white/80">{paymentPlan.name}</p>
-                </div>
-              </div>
-
-              {/* 内容 */}
-              <div className="p-6 space-y-6">
-                {/* 订单信息 */}
-                <div 
-                  className="p-4 rounded-xl"
-                  style={{ backgroundColor: 'rgba(51, 65, 85, 0.3)' }}
-                >
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-slate-400">会员类型</span>
-                    <span className="text-white font-medium">{paymentPlan.name}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-400">价格</span>
-                    <span className="text-2xl font-bold" style={{ color: '#22d3ee' }}>{paymentPlan.price}</span>
-                  </div>
-                </div>
-
-                {/* 支付方式 - PayPal预留 */}
-                <div>
-                  <h4 className="text-white font-semibold mb-3">选择支付方式</h4>
-                  <button 
-                    className="w-full p-4 rounded-xl flex items-center justify-center gap-3 transition-all hover:opacity-90"
-                    style={{ 
-                      backgroundColor: 'rgba(0, 112, 186, 0.2)',
-                      border: '2px solid #0070ba'
-                    }}
-                  >
-                    <span className="text-white font-medium">PayPal</span>
-                    <span className="text-xs text-slate-400">(即将接入)</span>
-                  </button>
-                </div>
-
-                {/* 提示 */}
-                <p className="text-xs text-slate-500 text-center">
-                  点击支付即表示您同意服务条款
-                </p>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
