@@ -1,5 +1,6 @@
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface PayPalButtonProps {
   amount: string;
@@ -20,6 +21,7 @@ export function PayPalButton({
 }: PayPalButtonProps) {
   const [{ isPending }] = usePayPalScriptReducer();
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const createOrder = (_data: any, actions: any) => {
     return actions.order.create({
@@ -35,11 +37,19 @@ export function PayPalButton({
     });
   };
 
-  const onApprove = async (_data: any, actions: any) => {
+  const onApprove = async (data: any, actions: any) => {
     try {
       const details = await actions.order.capture();
       console.log('Payment successful:', details);
+      
+      // 获取订单 ID
+      const orderId = details.id || data.orderID;
+      
+      // 调用回调
       onSuccess?.(details);
+      
+      // 跳转到支付成功页面
+      navigate(`/payment/success?orderId=${orderId}`);
     } catch (err) {
       console.error('Payment capture failed:', err);
       setError('支付处理失败，请重试');

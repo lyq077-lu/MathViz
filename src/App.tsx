@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { FunctionSquare, Shapes, Calculator, Circle, Triangle, TrendingUp, Play, Pause, RotateCcw, ChevronDown, ChevronRight, Box, FlaskConical, Dices, Sigma, Infinity, Sparkles, Hexagon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 // Tailwind safelist - 确保以下类名被包含在构建中
 // bg-cyan-500/5 bg-cyan-500/20 border-cyan-500/20 border-cyan-500/50 text-cyan-300/80 text-cyan-400
@@ -13,6 +14,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { UserProfile } from './components/AuthModal';
 import { LandingPage } from './components/LandingPage';
 import { PersonalCenter } from './components/PersonalCenter';
+import { PaymentSuccess } from './components/PaymentSuccess';
 import UnitCircle from './modules/functions/trigonometry/UnitCircle';
 import LinearFunction from './modules/functions/linear/LinearFunction';
 import QuadraticFunction from './modules/functions/quadratic/QuadraticFunction';
@@ -917,16 +919,12 @@ function MainApp({ onPersonalCenter }: { onPersonalCenter: () => void }) {
   );
 }
 
-// ============ 应用路由 ============
+// ============ 应用内容（带路由） ============
 function AppContent() {
   const { isLoggedIn } = useAuth();
   const [currentView, setCurrentView] = useState<'landing' | 'main' | 'personal'>('landing');
 
   // 根据登录状态和当前视图显示不同页面
-  // 1. 未登录 -> 显示首页 LandingPage
-  // 2. 已登录 + main -> 显示主应用 MainApp
-  // 3. 已登录 + personal -> 显示个人中心 PersonalCenter
-
   if (!isLoggedIn) {
     return <LandingPage />;
   }
@@ -940,8 +938,18 @@ function AppContent() {
   return <MainApp onPersonalCenter={() => setCurrentView('personal')} />;
 }
 
+// ============ 路由配置 ============
+function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="/" element={<AppContent />} />
+      <Route path="/payment/success" element={<PaymentSuccess />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
+
 // Google OAuth 客户端 ID
-// 注意：请替换为你从 Google Cloud Console 获取的实际客户端 ID
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID';
 
 function App() {
@@ -949,7 +957,9 @@ function App() {
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <AuthProvider>
         <AnimationProvider>
-          <AppContent />
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
         </AnimationProvider>
       </AuthProvider>
     </GoogleOAuthProvider>
